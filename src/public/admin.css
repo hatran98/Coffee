@@ -1,0 +1,421 @@
+/* Tổng quan về body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Admin Container */
+.admin-container {
+    display: flex;
+    flex: 1;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.admin-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+/* Sidebar Title */
+.sidebar h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Sidebar Menu */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    display: block;
+    padding: 8px 0;
+}
+
+.sidebar ul li a:hover {
+    background-color: #34495e;
+    padding-left: 10px;
+}
+
+/* Logout Button */
+.logout-container {
+    margin-top: auto;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+/* Title Styles */
+h1, h2 {
+    font-size: 26px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+form label {
+    font-size: 16px;
+    margin: 10px 0 5px;
+    display: block;
+}
+
+form input, form select, form button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 30px;
+}
+
+th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f2f2f2;
+}
+
+a {
+    color: #007BFF;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Popup Styles */
+.popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.popup .close-btn {
+    font-size: 30px;
+    font-weight: bold;
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.popup .close-btn:hover {
+    color: black;
+}
+
+select {
+    width: 100%;
+}
+
+/* Adjust select box for select2 */
+.select2-container {
+    width: 100% !important;
+}
+
+/* Responsive Styles */
+
+
+.pagination {
+    display: flex;
+    justify-content: center; /* Canh giữa phân trang */
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 8px 12px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #333;
+    font-size: 14px;
+}
+
+.pagination a:hover {
+    background-color: #f0f0f0;
+}
+
+.pagination .active {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination .prev,
+.pagination .next {
+    font-weight: bold;
+}
+
+.pagination a.disabled {
+    color: #ccc;
+    pointer-events: none;
+}
+
+.pagination .prev, .pagination .next {
+    padding: 8px 15px;
+}
+
+.pagination .ellipsis {
+    padding: 8px 12px;
+    cursor: default;
+    color: #aaa;
+}
+
+.pagination a:not(.active):hover {
+    background-color: #eee;
+}
+
+td a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px; /* Điều chỉnh kích thước icon */
+    margin: 0 10px; /* Khoảng cách giữa các icon */
+}
+
+td a:hover {
+    color: #007bff; /* Màu sắc khi hover */
+}
+
+td i {
+    margin-right: 5px; /* Khoảng cách giữa icon và text nếu cần */
+}
+
+/* Chỉ áp dụng cho nút sửa và xóa */
+td button {
+    margin-right: 10px; /* Khoảng cách giữa các nút */
+}
+/* Nút Sửa */
+button.edit-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    background-color: #4CAF50; /* Màu xanh cho nút sửa */
+    color: white;
+}
+
+button.edit-btn:hover {
+    background-color: #45a049; /* Màu khi hover */
+}
+
+/* Nút Xóa */
+button.delete-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    background-color: #f44336; /* Màu đỏ cho nút xóa */
+    color: white;
+}
+
+button.delete-btn:hover {
+    background-color: #e53935; /* Màu khi hover */
+}
+
+/* Định dạng icon */
+button.edit-btn i, button.delete-btn i {
+    font-size: 16px; /* Kích thước icon */
+}
+
+/* Chỉnh sửa giao diện cho nút khi được hover */
+button.edit-btn:hover, button.delete-btn:hover {
+    opacity: 0.8; /* Màu mờ khi hover */
+}
+
+td button {
+    margin-top: 5px; /* Khoảng cách giữa các nút */
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Khi popup hiển thị, chuyển thành layout column cho các nút */
+.modal-content button {
+    margin-bottom: 10px; /* Khoảng cách giữa các nút khi popup mở ra */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Đảm bảo các nút Edit và Delete trong popup có khoảng cách hợp lý */
+.modal-content {
+    display: flex;
+    flex-direction: column; /* Đảm bảo các nút trong popup là dạng column */
+    gap: 10px; /* Khoảng cách giữa các nút trong popup */
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.close-btn {
+    padding: 10px 20px;
+    background-color: #f44336; /* Màu đỏ */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Icon trong nút Close */
+.close-btn i {
+    margin-right: 8px; /* Khoảng cách giữa icon và text */
+    font-size: 18px; /* Kích thước icon */
+}
+
+/* Hiệu ứng hover */
+.close-btn:hover {
+    background-color: #e53935; /* Màu đỏ đậm khi hover */
+}
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    form, table {
+        margin: 0;
+    }
+
+    th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .popup-content {
+        width: 90%;
+    }
+}
