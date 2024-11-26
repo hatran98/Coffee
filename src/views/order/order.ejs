@@ -59,6 +59,12 @@
                 <input type="text" id="phone" name="phone" class="form-input" required>
             </div>
 
+            <div class="form-group">
+                <label for="discountCode" class="form-label">Mã giảm giá:</label>
+                <input type="text" id="discountCode" name="discountCode" class="form-input">
+                <button type="button" id="applyDiscount" class="apply-button">Áp dụng</button>
+            </div>
+
             <h3 class="payment-method-title">Phương thức thanh toán</h3>
             
             <!-- Phương thức thanh toán -->
@@ -159,6 +165,44 @@
                 openModal('sepayModal');
             }
         });
+
+        document.getElementById('applyDiscount').addEventListener('click', function() {
+    const discountCode = document.getElementById('discountCode').value; // Lấy mã giảm giá từ input
+
+    // Kiểm tra nếu người dùng chưa nhập mã giảm giá
+    if (!discountCode) {
+        alert('Vui lòng nhập mã giảm giá!');
+        return;
+    }
+
+    // Gửi mã giảm giá đến BE để xác thực
+    fetch('/check-discount', {  // Đổi URL này thành URL endpoint của backend của bạn
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ discountCode: discountCode })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.valid) {
+            // Mã giảm giá hợp lệ, tính toán lại tổng tiền
+            const discountAmount = data.discountAmount;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+            const newTotal = totalAmount - discountAmount;
+
+            // Cập nhật lại tổng tiền sau khi giảm giá
+            document.getElementById('totalAmount').innerText = newTotal.toFixed(2);
+            alert('Mã giảm giá đã được áp dụng!');
+        } else {
+            alert('Mã giảm giá không hợp lệ!');
+        }
+    })
+    .catch(error => {
+        console.error('Có lỗi xảy ra:', error);
+        alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
+    });
+});
     </script>
 </body>
 </html>

@@ -44,6 +44,8 @@ body {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    overflow-x: auto; /* Thêm cuộn ngang cho bảng */
+    display: block; /* Chuyển bảng thành block để có thể cuộn ngang */
 }
 
 .product-table th, .product-table td {
@@ -173,62 +175,54 @@ body {
     color: #000;
 }
 
+/* Modal */
 .modal {
-    display: none; /* Ẩn modal khi chưa mở */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); /* Căn giữa modal */
-    width: 50%; /* Bạn có thể điều chỉnh kích thước */
-    max-width: 500px;
-    background-color: white;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    z-index: 1000; /* Đảm bảo modal luôn ở trên cùng */
+    display: none; /* Ẩn modal... */
 }
 
-/* Định dạng overlay (nền tối phía sau modal) */
 .overlay {
-    display: none; /* Ẩn overlay khi chưa mở modal */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Nền tối */
-    z-index: 999; /* Overlay dưới modal */
+    display: none;
 }
 
-/* Modal content */
-.modal-content {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    text-align: center;
-    width: 400px;
-}
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    /* Điều chỉnh container để vừa với màn hình nhỏ */
+    .container {
+        width: 95%;
+    }
 
-.modal-content h2 {
-    font-size: 24px;
-    font-weight: bold;
-}
+    /* Thay đổi kích thước font cho tiêu đề */
+    .title {
+        font-size: 28px;
+    }
 
-.modal-close {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 4px;
-}
+    .section-title {
+        font-size: 20px;
+    }
 
-.modal-close:hover {
-    background-color: #2563eb;
-}
+    /* Điều chỉnh kích thước bảng */
+    .product-table th, .product-table td {
+        font-size: 14px; /* Thu nhỏ font chữ */
+        padding: 8px; /* Thu nhỏ khoảng cách */
+    }
 
-#sepayQrCode {
-    margin-top: 20px;
-    max-width: 100%;
+    /* Thay đổi kích thước nút */
+    .submit-button, .back-button {
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    /* Điều chỉnh form */
+    .form-label {
+        font-size: 14px;
+    }
+
+    .form-input {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .payment-option {
+        font-size: 14px;
+    }
 }
