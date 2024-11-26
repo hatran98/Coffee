@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const OrderController = require('../../controllers/OderController');
+const OrderController = require('../../controllers/OrderController');
 
-// Route để thêm báo giá mới
+router.get('/', (req, res) => {
+    res.render('order/order');
+});
 router.post('/', OrderController.createOrder);
 
 module.exports = router;

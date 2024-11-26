@@ -47,53 +47,123 @@ const getCountries = async (req, res) => {
 
 const createQuote = async (req, res) => {
   try {
-      const { country, code, name, product_type , price, description, limit } = req.body;
+    const { 
+      country, 
+      code, 
+      name, 
+      product_type, 
+      price, 
+      description, 
+      limit, 
+      brew_type, 
+      weight, 
+      roast_level 
+    } = req.body;
 
-      // Kiểm tra các trường không hợp lệ
-      if (!name || !code || !price) {
-          return res.status(400).send('Tên sản phẩm, mã sản phẩm và giá là bắt buộc!');
-      }
-
-      if (price <= 0) {
-          return res.status(400).send('Giá sản phẩm phải lớn hơn 0!');
-      }
-
-      // Kiểm tra xem quốc gia có tồn tại không
-      const countryData = await Country.findById(country);
-      if (!countryData) {
-          return res.status(400).send('Quốc gia không hợp lệ!');
-      }
-
-      // Sử dụng giá trị limit từ input nếu có, nếu không thì dùng giá trị mặc định là 2
-      const productLimit = limit && limit > 0 ? limit : 2;
-
-      // Tạo sản phẩm mới
-      const newProduct = new Product({
-          product_code: code,
-          product_name: name,
-          product_type: product_type, // Có thể thay đổi nếu cần
-          description: description,
-          country: country,  // Lưu ObjectId của quốc gia
-          price: price,
-          status: 'active',
-          limit: productLimit,  // Sử dụng giá trị limit từ input hoặc mặc định là 2
+    // Kiểm tra các trường bắt buộc
+    if (!name || !code || !price || !brew_type || !weight || !roast_level) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tên sản phẩm, mã sản phẩm, giá, kiểu pha chế, trọng lượng và kiểu rang là bắt buộc!',
       });
+    }
 
-      await newProduct.save();
+    if (price <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Giá sản phẩm phải lớn hơn 0!',
+      });
+    }
 
-      // Quay lại trang danh sách hoặc trang chi tiết của sản phẩm
-      res.redirect('/admin');
+    // Kiểm tra `country`
+    const countryData = await Country.findById(country);
+    if (!countryData) {
+      return res.status(400).json({
+        success: false,
+        message: 'Quốc gia không hợp lệ!',
+      });
+    }
+
+    // Kiểm tra `product_type`
+    const validProductTypes = ['general', 'specialty', 'lot'];
+    if (product_type && !validProductTypes.includes(product_type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Loại sản phẩm không hợp lệ! Hợp lệ: ${validProductTypes.join(', ')}`,
+      });
+    }
+
+    // Kiểm tra `brew_type`
+    const validBrewTypes = ['Pour', 'Pour + Espresso', 'Espresso'];
+    if (!validBrewTypes.includes(brew_type)) {
+      return res.status(400).json({
+        success: false,
+        message: `Kiểu pha chế không hợp lệ! Hợp lệ: ${validBrewTypes.join(', ')}`,
+      });
+    }
+
+    // Kiểm tra `weight`
+    const validWeights = ['18 gram', '200 gram', '500 gram', '1kg', 'Vui lòng liên hệ'];
+    if (!validWeights.includes(weight)) {
+      return res.status(400).json({
+        success: false,
+        message: `Trọng lượng không hợp lệ! Hợp lệ: ${validWeights.join(', ')}`,
+      });
+    }
+
+    // Kiểm tra `roast_level`
+    const validRoastLevels = ['Light', 'Light Medium', 'Medium', 'Medium-Dark', 'Dark', 'Very Dark'];
+    if (!validRoastLevels.includes(roast_level)) {
+      return res.status(400).json({
+        success: false,
+        message: `Kiểu rang không hợp lệ! Hợp lệ: ${validRoastLevels.join(', ')}`,
+      });
+    }
+
+    // Sử dụng giá trị `limit` từ input nếu hợp lệ, nếu không thì dùng giá trị mặc định là 2
+    const productLimit = limit && limit > 0 ? limit : 2;
+
+    // Tạo sản phẩm mới
+    const newProduct = new Product({
+      product_code: code,
+      product_name: name,
+      product_type: product_type || 'general', // Sử dụng giá trị mặc định nếu không truyền
+      description: description || '',
+      country: country,
+      price: price,
+      status: 'active',
+      limit: productLimit,
+      brew_type: brew_type,
+      weight: weight,
+      roast_level: roast_level,
+    });
+
+    // Lưu sản phẩm vào cơ sở dữ liệu
+    await newProduct.save();
+
+    // Trả về kết quả thành công
+   res.status(200).redirect('/admin');
   } catch (error) {
-      console.error(error);
-      res.status(500).send('Có lỗi xảy ra khi tạo sản phẩm!');
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Có lỗi xảy ra khi tạo sản phẩm!',
+    });
   }
 };
 
+
 const updateProduct = async (req, res) => {
   try {
-    const { _id, country, code, name, description, edit_product_type, price, limit } = req.body;
+    // Lấy các giá trị từ body request
+    const { _id, country, code, name, description, edit_product_type, price, limit, brew_type, weight, roast_level } = req.body;
 
-    // Tạo object dữ liệu cập nhật
+    // Kiểm tra nếu thiếu bất kỳ trường nào quan trọng
+    if (!_id || !name || !code || !price || !brew_type || !weight || !roast_level) {
+      return res.status(400).json({ error: 'Các trường bắt buộc không được bỏ trống.' });
+    }
+
+    // Tạo object cập nhật các trường
     const updates = {
       country,
       product_code: code,
@@ -102,19 +172,21 @@ const updateProduct = async (req, res) => {
       product_type: edit_product_type,
       price,
       limit,
+      brew_type,
+      weight,
+      roast_level,  
     };
 
-    // Thực hiện cập nhật trong database
     const updatedProduct = await Product.findByIdAndUpdate(_id, updates, {
-      new: true,
-      runValidators: true,
+      new: true, 
+      runValidators: true, 
     });
 
     if (!updatedProduct) {
       return res.status(404).json({ error: 'Không tìm thấy sản phẩm.' });
     }
 
-    return res.redirect('/admin');
+    res.status(200).redirect('/admin');
   } catch (error) {
     return res.status(500).json({
       error: 'Lỗi hệ thống',
@@ -123,6 +195,45 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const getProducts = async (req, res) => {
+  try {
+    // Nhóm sản phẩm theo country và lấy thông tin quốc gia
+    const productsByCountry = await Product.aggregate([
+      {
+        $group: {
+          _id: "$country", // Nhóm theo trường country
+          products: { $push: "$$ROOT" } // Lấy tất cả thông tin sản phẩm trong nhóm này
+        }
+      },
+      {
+        $lookup: {
+          from: "countries", // Tên collection quốc gia
+          localField: "_id", // Trường dùng để nối với _id trong collection countries
+          foreignField: "_id", // Trường trong collection countries để nối với _id của sản phẩm
+          as: "countryInfo" // Tên trường mới chứa thông tin quốc gia
+        }
+      },
+      {
+        $unwind: "$countryInfo" // Chỉ lấy 1 quốc gia cho mỗi nhóm
+      },
+      {
+        $sort: { "_id": 1 } // Sắp xếp theo tên quốc gia
+      }
+    ]);
+
+    console.log(productsByCountry);
+
+    // Truyền dữ liệu nhóm sản phẩm theo country vào template
+    res.render("index", { products: productsByCountry });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Lỗi khi tải dữ liệu sản phẩm' });
+  }
+};
 
 
-module.exports = { createQuote, getCountries , updateProductLimit , updateProduct };
+
+
+
+
+module.exports = { createQuote, getCountries , updateProductLimit , updateProduct , getProducts };

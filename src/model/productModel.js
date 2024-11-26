@@ -50,6 +50,21 @@ const productSchema = new mongoose.Schema({
         enum: ['active', 'inactive'],
         default: 'active',
     },
+    brew_type: { 
+        type: String,
+        required: true,
+        enum: ['Pour', 'Pour + Espresso', 'Espresso'], 
+    },
+    weight: { 
+        type: String,
+        required: true,
+        enum: ['18 gram', '200 gram', '500 gram', '1kg', 'Vui lòng liên hệ'], 
+    },
+    roast_level: { 
+        type: String,
+        required: true,
+        enum: ['Light', 'Light Medium', 'Medium', 'Medium-Dark', 'Dark', 'Very Dark'], 
+    },
 }, { 
     timestamps: true 
 });

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Hàng</title>
+    <link href="/order.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">Đặt Hàng</h1>
+
+        <!-- Thông tin đơn hàng -->
+        <div class="order-info">
+            <h2 class="section-title">Thông tin đơn hàng</h2>
+        
+            <!-- Hiển thị các sản phẩm trong đơn hàng -->
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Giá</th>
+                        <th>Tổng tiền</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Các sản phẩm sẽ được thêm vào đây bằng JavaScript -->
+                </tbody>
+            </table>
+        
+            <!-- Hiển thị tổng số tiền phải thanh toán -->
+            <div class="total-amount">
+                <p><strong>Tổng thành tiền:</strong> <span id="totalAmount">0.00</span> VND</p>
+            </div>
+        </div>
+
+        <!-- Form nhập thông tin khách hàng và phương thức thanh toán -->
+        <h2 class="section-title">Thông tin khách hàng</h2>
+        <form id="orderForm" action="/order/submit" method="POST" class="order-form">
+            
+            <!-- Tên đầy đủ -->
+            <div class="form-group">
+                <label for="fullName" class="form-label">Tên đầy đủ:</label>
+                <input type="text" id="fullName" name="fullName" class="form-input" required>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" id="email" name="email" class="form-input" required>
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="form-group">
+                <label for="phone" class="form-label">Số điện thoại:</label>
+                <input type="text" id="phone" name="phone" class="form-input" required>
+            </div>
+
+            <h3 class="payment-method-title">Phương thức thanh toán</h3>
+            
+            <!-- Phương thức thanh toán -->
+            <div class="payment-method">
+                <label class="payment-option">
+                    <input type="radio" name="paymentMethod" value="sepay" required>
+                    Thanh toán qua SePay
+                </label>
+                <label class="payment-option">
+                    <input type="radio" name="paymentMethod" value="cod" required>
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+            </div>
+
+            <!-- Nút Đặt hàng -->
+            <button type="submit" class="submit-button">Đặt hàng</button>
+        </form>
+
+        <!-- Quay lại trang chủ -->
+        <div class="back-home">
+            <button onclick="window.location.href='/'" class="back-button">Quay lại trang chủ</button>
+        </div>
+    </div>
+
+    <div id="codModal" class="modal">
+        <div class="modal-content">
+            <h2>Đặt hàng thành công!</h2>
+            <p>Đơn hàng của bạn sẽ được giao trong thời gian sớm nhất.</p>
+            <button onclick="closeModal('codModal')" class="modal-close">Đóng</button>
+        </div>
+    </div>
+    
+    <div id="sepayModal" class="modal">
+        <div class="modal-content">
+            <h2>Thanh toán qua SePay</h2>
+            <p>Quét mã QR dưới đây để thực hiện thanh toán qua SePay:</p>
+            <img id="sepayQrCode" src="" alt="QR Code">
+            <button onclick="closeModal('sepayModal')" class="modal-close">Đóng</button>
+        </div>
+    </div>
+    
+    <!-- Overlay nền tối -->
+    <div id="overlay" class="overlay"></div>
+
+    <script>
+        // Hàm mở modal
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = "block";  // Hiển thị modal
+            document.getElementById('overlay').style.display = "block";  // Hiển thị overlay
+        }
+
+        // Hàm đóng modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";  // Ẩn modal
+            document.getElementById('overlay').style.display = "none";  // Ẩn overlay
+        }
+
+        // Hàm lấy dữ liệu đơn hàng từ localStorage và cập nhật bảng
+        function loadOrderDetails() {
+            const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
+            console.log(orderDetails);
+
+            if (orderDetails) {
+                let totalAmount = 0;
+                const tableBody = document.getElementById('productTableBody');
+                orderDetails.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${product.productCode}</td>
+                        <td>${product.productName}</td>
+                        <td>${product.quantity}</td>
+                        <td>${product.price} VND</td>
+                        <td class="total-price">${(product.quantity * product.price).toFixed(2)} VND</td>
+                    `;
+                    tableBody.appendChild(row);
+                    totalAmount += product.quantity * product.price;
+                });
+
+                document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+            }
+        }
+
+        // Gọi hàm để load dữ liệu khi trang được tải
+        window.onload = loadOrderDetails;
+
+        // Xử lý submit form và hiển thị modal
+        document.getElementById('orderForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Ngừng submit form
+
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (paymentMethod === 'cod') {
+                // Hiển thị modal COD
+                openModal('codModal');
+            } else if (paymentMethod === 'sepay') {
+                // Giả sử mã QR SePay được tạo sẵn từ server
+                document.getElementById('sepayQrCode').src = 'path/to/sepay-qr-code.png'; // Thay thế bằng đường dẫn thực tế
+                openModal('sepayModal');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+/* Body căn giữa ngang và nằm ở trên cùng */
+body {
+    margin: 0;
+    padding: 0;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Container chính */
+.container {
+    max-width: 1500px; /* Chiều rộng tối đa của nội dung */
+    width: 100%; /* Chiều rộng tự động chiếm hết màn hình */
+    background-color: white;
+    border: 1px solid #ddd; /* Viền để tạo khung */
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+    border-radius: 10px; /* Bo góc nhẹs */
+    margin-top: 0; /* Loại bỏ khoảng cách từ trên cùng */
+}
+
+/* Căn chỉnh cho tiêu đề */
+h1 {
+    text-align: center;
+    font-size: 24px;
+    color: #d33;
+    margin-bottom: 20px;
+}
+
+/* Thông tin liên hệ */
+.contact-info {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #ffaa00;
+    margin-top: 20px;
+}
+
+/* Quốc gia và bảng */
+.section {
+    margin-bottom: 30px;
+}
+.table-container {
+    width: 100%;
+    margin-bottom: 30px; /* Khoảng cách giữa các bảng */
+}
+
+/* Căn chỉnh thông tin quốc gia */
+.country {
+    display: flex;
+    align-items: center;  /* Căn giữa theo chiều dọc */
+    justify-content: flex-end;  /* Căn phải cho quốc gia */
+    font-size: 20px;
+    margin-bottom: 10px; /* Khoảng cách dưới */
+    height: 60px; /* Chiều cao đồng nhất */
+}
+.flag { 
+    height:50px;
+    font-size: 40px;
+    margin-right: 10px;
+}
+
+.text {
+    font-size: 20px;
+    height: 40px; /* Chiều cao đồng nhất với .flag */
+    width: 120px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center; /* Căn giữa theo chiều dọc */
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
+/* Bảng */
+.coffee-table {
+    width: 100%;
+    border-collapse: collapse; /* Xóa khoảng cách giữa các ô */
+    margin-bottom: 20px; /* Khoảng cách giữa các bảng */
+}
+
+.coffee-table th,
+.coffee-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.coffee-table th {
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 16px;
+}
+
+.coffee-table td {
+    font-size: 14px;
+}
+
+.order-button {
+    position: fixed;         /* Giữ cố định trên màn hình */
+    bottom: 20px;            /* Cách mép dưới 20px */
+    right: 20px;             /* Cách mép phải 20px */
+    background-color: red;   /* Màu nền đỏ */
+    color: white;            /* Màu chữ trắng */
+    border: none;            /* Bỏ viền */
+    padding: 15px 30px;      /* Điều chỉnh padding */
+    border-radius: 5px;      /* Bo góc */
+    font-size: 30px;         /* Kích thước chữ */
+    cursor: pointer;        /* Con trỏ chuột khi di qua nút */
+    z-index: 1000;           /* Hiển thị phía trên mọi phần tử khác */
+    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2); /* Hiệu ứng đổ bóng */
+}
+
+.order-button:hover {
+    background-color: darkred; /* Đổi màu thành đỏ đậm hơn khi hover */
+}
+
+
+.number-input-container {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc; /* Border cho toàn bộ khối */
+    border-radius: 5px;
+    padding: 5px;
+    width: 120px;
+    justify-content: space-between;
+}
+
+.number-input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    outline: none;
+    font-size: 16px;
+}
+
+button {
+    background-color: #f1f1f1;
+    border: none;
+    font-size: 18px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #ddd;
+}
+
+button:focus {
+    outline: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield; 
+}
+
+
+@media screen and (max-width: 768px) {
+    /* Container chính */
+    .container {
+        padding: 15px; /* Giảm padding */
+    }
+
+    /* Tiêu đề */
+    h1 {
+        font-size: 20px; /* Giảm kích thước font cho tiêu đề */
+    }
+
+    /* Thông tin liên hệ */
+    .contact-info {
+        font-size: 18px; /* Giảm kích thước font */
+    }
+
+    /* Căn chỉnh lại quốc gia */
+    .country {
+        font-size: 24px; /* Giảm kích thước font */
+        justify-content: center; /* Căn giữa */
+        margin-top: 10px;
+    }
+
+    /* Điều chỉnh bảng */
+    .coffee-table th,
+    .coffee-table td {
+        font-size: 14px; /* Giảm kích thước font */
+        padding: 6px;    /* Giảm padding */
+    }
+
+    /* Điều chỉnh nút Order */
+    .order-button {
+        padding: 12px 25px; /* Giảm kích thước padding */
+        font-size: 25px;    /* Giảm kích thước font */
+    }
+}
+
+/* Responsive cho di động */
+@media screen and (max-width: 480px) {
+    /* Tiêu đề */
+    h1 {
+        font-size: 18px; /* Giảm kích thước font tiêu đề */
+    }
+
+    /* Thông tin liên hệ */
+    .contact-info {
+        font-size: 16px; /* Giảm font-size */
+    }
+
+    /* Quốc gia */
+    .country {
+        font-size: 20px; /* Giảm kích thước font */ 
+    }
+
+    /* Điều chỉnh bảng */
+    .coffee-table th,
+    .coffee-table td {
+        font-size: 12px; /* Giảm font-size bảng */
+        padding: 4px;    /* Giảm padding */
+    }
+
+    /* Điều chỉnh nút Order */
+    .order-button {
+        padding: 10px 20px;  /* Giảm padding */
+        font-size: 20px;     /* Giảm font-size */
+    }
+}

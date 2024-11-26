@@ -1,0 +1,234 @@
+/* Cấu hình chung */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #495057;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container chính */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 0;
+}
+
+/* Tiêu đề chính */
+.title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 30px;
+}
+
+/* Thông tin đơn hàng */
+.order-info {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Table sản phẩm */
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.product-table th, .product-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.product-table th {
+    background-color: #f1f5f9;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.product-table td {
+    font-size: 16px;
+    color: #495057;
+}
+
+.product-table .total-price {
+    font-weight: 600;
+    color: red;
+}
+
+/* Form */
+.order-form {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+}
+
+/* Nhóm form */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Nhãn của input */
+.form-label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Input */
+.form-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    border-color: #000;
+}
+
+/* Phương thức thanh toán */
+.payment-method-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.payment-method {
+    margin-bottom: 30px;
+}
+
+.payment-option {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Nút Submit */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background-color: rgb(12, 168, 12);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: green;
+}
+
+/* Quay lại trang chủ */
+.back-home {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #e2e8f0;
+    color: #2d3748;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #cbd5e0;
+}
+
+.total-amount {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: red;
+    text-align: right; /* Canh phải */
+}
+
+.total-amount strong {
+    font-size: 20px;
+    color: #000;
+}
+
+.modal {
+    display: none; /* Ẩn modal khi chưa mở */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Căn giữa modal */
+    width: 50%; /* Bạn có thể điều chỉnh kích thước */
+    max-width: 500px;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000; /* Đảm bảo modal luôn ở trên cùng */
+}
+
+/* Định dạng overlay (nền tối phía sau modal) */
+.overlay {
+    display: none; /* Ẩn overlay khi chưa mở modal */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Nền tối */
+    z-index: 999; /* Overlay dưới modal */
+}
+
+/* Modal content */
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    width: 400px;
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.modal-close {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+.modal-close:hover {
+    background-color: #2563eb;
+}
+
+#sepayQrCode {
+    margin-top: 20px;
+    max-width: 100%;
+}

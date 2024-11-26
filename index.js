@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const morgan = require('morgan');
+const path = require('path');
 const app = express();
 app.use(morgan('dev'))
 // Import kết nối database
@@ -20,12 +21,12 @@ app.set("views", __dirname + "/src/views"); // Đảm bảo đường dẫn tớ
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Đường dẫn tĩnh cho các file CSS, JS
-app.use(express.static("src/public"));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Sử dụng các route
 app.use('/', indexRoute);  
 app.use('/', adminRoute);  
-app.use('/api', apiRoute);
+app.use('/', apiRoute);
 
 
 app.listen(PORT, () => {

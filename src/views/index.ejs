@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Báo giá</title>
-    <!-- Liên kết tới file CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div class="container">
@@ -14,127 +13,56 @@
             <div class="header-row">
                 <p class="contact-info">Lotus Farm 49 <br>Zalo 089-88888-68</br></p>
             </div>
-          
-            <div class="table-container">
-                <p class="country">
-                    <span class="flag"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/429px-Flag_of_Brazil.svg.png" alt="Brazil Flag"></span>
-                    <span class="text">Brazil</span>
-                </p>
-                <table class="coffee-table">
-                    <tr>
-                        <th>Mã</th>
-                        <th>Coffee Name / Flavor Note</th>
-                        <th>Sơ Chế</th>
-                        <th>Loại</th>
-                        <th>Giá VND</th>
-                        <th>Số Lượng</th>
-                    </tr>
-                    <tr>
-                        <td>BR2401</td>
-                        <td ><p>Tiger Santos NY2 17/18 New Lot</p>
-                            <p>Brown Sugar, Dark Chocolate, Caramel</p></td>
-                        <td>Natural</td>
-                        <td>Phổ thông</td>
-                        <td>380</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                    <tr>
-                        <td>BR2402</td>
-                        <td><p>Tiger Cerrado NY2 17/18 New Lot</p>
-                            <p>Brown Sugar, Dark Chocolate, Caramel</p></td>
-                        <td>Natural</td>
-                        <td>Phổ thông</td>
-                        <td>380</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                    <tr>
-                        <td>BR2406</td>
-                        <td><p>Fazenda Bom Jardin Geisha Promotion</p>
-                            <p>White Chocolate, Caramel, Lime, Bright Acidity, Long Sweet</p></td>
-                        <td>Pulped Anaerobic</td>
-                        <td>Lot nhỏ</td>
-                        <td>900</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                    <tr>
-                        <td>Coming</td>
-                        <td><p>Santos Swiss Water Decaffeinated</p>
-                            <p>Chocolate, Cocoa, Toast, Cereals, Nuts</p></td>
-                        <td>Swiss Water Decaf</td>
-                        <td>Specialty</td>
-                        <td>650</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                    <tr>
-                        <td>Coming</td>
-                        <td><p>Pasteum Red Catuai Natural</p>
-                            <p>Almonds, Peanuts, Raisins, Dates</p></td>
-                        <td>Natural</td>
-                        <td>Lot nhỏ</td>
-                        <td>570</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                    <tr>
-                        <td>Coming</td>
-                        <td><p>Fazenda Monte Alegre Natural-Lemon Iced Tea Yeast Fermented</p>
-                            <p>Green Apple, Lemon, Syrup</p></td>
-                        <td>Natural</td>
-                        <td>Lot nhỏ</td>
-                        <td>570</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                </table>
-                <p class="country">
-                    <span class="flag"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/429px-Flag_of_Brazil.svg.png" alt="Brazil Flag"></span>
-                    <span class="text">Brazil</span>
-                </p>
-                <table class="coffee-table">
-                    <tr>
-                        <th>Mã</th>
-                        <th>Coffee Name / Flavor Note</th>
-                        <th>Sơ Chế</th>
-                        <th>Loại</th>
-                        <th>Giá VND</th>
-                        <th>Số Lượng</th>
-                    </tr>
-                    <tr>
-                        <td>BR2401</td>
-                        <td>Tiger Santos NY2 17/18 New Lot</td>
-                        <td>Natural</td>
-                        <td>Phổ thông</td>
-                        <td>380</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                </table>
-                <p class="country">
-                    <span class="flag"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/429px-Flag_of_Brazil.svg.png" alt="Brazil Flag"></span>
-                    <span class="text">Brazil</span>
-                </p>
-                <table class="coffee-table">
-                    <tr>
-                        <th>Mã</th>
-                        <th>Coffee Name / Flavor Note</th>
-                        <th>Sơ Chế</th>
-                        <th>Loại</th>
-                        <th>Giá VND</th>
-                        <th>Số Lượng</th>
-                    </tr>
-                    <tr>
-                        <td>BR2401</td>
-                        <td>Tiger Santos NY2 17/18 New Lot</td>
-                        <td>Natural</td>
-                        <td>Phổ thông</td>
-                        <td>380</td>
-                        <td><input type="number" class="number-input"></td>
-                    </tr>
-                </table>
-                
-            </div>
-            
 
-            <button type="submit" class="order-button">Đặt hàng</button>
+            <% products.forEach(group => { %>
+                <div class="table-container">
+                    <!-- Hiển thị cờ và tên quốc gia -->
+                    <p class="country">
+                        <span class="flag"><%= group.countryInfo.flag %></span>
+                        <span class="text"><%= group.countryInfo.name %></span>
+                    </p>
+                    <table class="coffee-table">
+                        <tr>
+                            <th>Mã</th>
+                            <th>Coffee Name / Flavor Note</th>
+                            <th>Sơ Chế</th>
+                            <th>Loại pha</th>
+                            <th>Cân nặng</th>
+                            <th>Cấp độ rang</th>
+                            <th>Giá VND</th>
+                            <th>Limit</th>
+                            <th>Số Lượng</th>
+                        </tr>
+                        <% group.products.forEach(product => { %>
+                            <tr>
+                                <td><%= product.product_code %></td>
+                                <td>
+                                    <p><%= product.product_name %></p>
+                                    <p><%= product.description %></p>
+                                </td>
+                                <td><%= product.product_type %></td>
+                                <td><%= product.brew_type %></td>
+                                <td><%= product.weight %></td>
+                                <td><%= product.roast_level %></td>
+                                <td><%= product.price %></td>
+                                <td><%= product.limit %></td>
+                                <td>
+                                    <div class="number-input-container">
+                                      <button class="decrement">-</button>
+                                      <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
+                                      <button class="increment">+</button>
+                                    </div>
+                                  </td>
+                            </tr>
+                        <% }); %>
+                    </table>
+                </div>
+            <% }); %>
         </div>
-        <!-- Thêm các phần cho Costa Rica, Guatemala -->
+        <button class="order-button">Đặt hàng</button>
     </div>
+    <script src="js/order.js"></script> 
+    <script src="js/custom.js"></script> 
+
 </body>
 </html>

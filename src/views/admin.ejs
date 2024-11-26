@@ -1,236 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Báo Giá</title>
-    <link rel="stylesheet" href="/admin.css"> <!-- Đường dẫn CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/admin.css" />
+    <!-- Đường dẫn CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery cho popup -->
-</head>
-<body>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery cho popup -->
+  </head>
+  <body>
     <div class="admin-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <img src="/path/to/admin-avatar.jpg" alt="Admin Avatar" class="admin-avatar">
-                <h2>Quản Lý</h2>
-            </div>
-            <ul>
-                <li><a href="/admin">Quản lý sản phẩm</a></li>
-                <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
-                <li><a href="/admin/settings">Cài đặt</a></li>
-            </ul>
-            <div class="logout-container">
-                <a href="/logout" class="logout-btn">Đăng Xuất</a>
-            </div>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <img
+            src="/path/to/admin-avatar.jpg"
+            alt="Admin Avatar"
+            class="admin-avatar"
+          />
+          <h2>Quản Lý</h2>
         </div>
+        <ul>
+          <li><a href="/admin">Quản lý sản phẩm</a></li>
+          <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
+          <li><a href="/admin/settings">Cài đặt</a></li>
+        </ul>
+        <div class="logout-container">
+          <a href="/logout" class="logout-btn">Đăng Xuất</a>
+        </div>
+      </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <h1>Quản Lý Sản Phẩm</h1>
-        
-            <!-- Form tạo Báo Giá mới -->
-            <form action="/admin/create-quote" method="POST">
-                <h2>Tạo Sản Phẩm Mới</h2>
-            
-                <!-- Quốc Gia -->
-                <label for="country">Quốc Gia:</label>
-                <select name="country" id="country" required>
-                    <% countries.forEach(country => { %>
-                        <option value="<%= country._id %>">
-                            <%= country.name %> 
-                            <span><%= country.flag %></span>
-                        </option>
-                    <% }) %>
-                </select>
-            
-                <!-- Mã Sản Phẩm -->
-                <label for="code">Mã Sản Phẩm:</label>
-                <input type="text" id="code" name="code" required>
-            
-                <!-- Tên Sản Phẩm -->
-                <label for="name">Tên Sản Phẩm:</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="description">Mô tả:</label>
-                <input type="text" id="description" name="description">
-                
-                <!-- Phương pháp rang -->
-                <label for="product_type">Phương pháp rang:</label>
-                <select name="product_type" id="product_type" required>
-                    <option value="general">General</option>
-                    <option value="specialty">Specialty</option>
-                    <option value="lot">Lot</option>
-                </select>
-            
-                <!-- Giá -->
-                <label for="price">Giá:</label>
-                <input type="number" id="price" name="price" required>
-            
-                <!-- Giới hạn -->
-                <label for="limit">Giới Hạn:</label>
-                <input type="number" id="limit" name="limit" min="1" placeholder="Nhập giới hạn" value="1"> <!-- Mặc định là 2 -->
-            
-                <button type="submit">Tạo Sản Phẩm</button>
-            </form>
-        
-            <h2>Danh Sách Sản Phẩm</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Quốc Gia</th>
-                        <th>Cờ</th>
-                        <th>Mã Sản Phẩm</th>
-                        <th>Tên Sản Phẩm</th>
-                        <th>Sơ Chế</th>
-                        <th>Mô Tả</th>
-                        <th>Giá</th>
-                        <th>Giới Hạn</th>
-                        <th>Trạng Thái</th>
-                        <th>Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% products.forEach(product => { %>
-                        <tr>
-                            <td><%= product.country?.name %></td>
-                            <td><%= product.country?.flag %></td>
-                            <td><%= product.product_code %></td>
-                            <td><%= product.product_name %></td>
-                            <td><%= product.product_type %></td>
-                            <td><%= product.description %></td>
-                            <td><%= product.price %></td>
-                            <td><%= product.limit %></td>
-                            <td>
-                                <%= product.status === 'active' ? '✔️' : '❌' %>
-                            </td>
-                            <td>
-                                <!-- Nút Edit -->
-                                <button class="edit-btn" data-id="<%= product._id %>" data-country="<%= product.country._id %>" data-name="<%= product.product_name %>" data-method="<%= product.method %>" data-price="<%= product.price %>" data-description="<%= product.description %>" data-limit="<%= product.limit %>" data-code ="<%= product.product_code %>" data-product_type ="<%= product.product_type %>">
-                                    <i class="fa fa-edit" aria-hidden="true"></i> Sửa
-                                </button>
-                                
-                                <!-- Nút Delete -->
-                                <button class="delete-btn">
-                                    <i class="fa fa-trash" aria-hidden="true"></i> Xóa
-                                </button>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-            
-            <!-- Phân trang -->
-            <div class="pagination">
-                <% if (currentPage > 1) { %>
-                    <a href="?page=<%= currentPage - 1 %>" class="prev">&laquo; Previous</a>
-                <% } %>
-            
-                <% for (let i = 1; i <= totalPages; i++) { %>
-                    <a href="?page=<%= i %>" class="<%= i === currentPage ? 'active' : '' %>"><%= i %></a>
-                <% } %>
-            
-                <% if (currentPage < totalPages) { %>
-                    <a href="?page=<%= currentPage + 1 %>" class="next">Next &raquo;</a>
-                <% } %>
-            </div>
-            
+      <!-- Main Content -->
+      <div class="main-content">
+        <h1>Quản Lý Sản Phẩm</h1>
+
+        <!-- Form tạo Báo Giá mới -->
+        <form action="/admin/create-quote" method="POST">
+          <h2>Tạo Sản Phẩm Mới</h2>
+
+          <!-- Quốc Gia -->
+          <label for="country">Quốc Gia:</label>
+          <select name="country" id="country" required>
+            <% countries.forEach(country => { %>
+            <option value="<%= country._id %>">
+              <%= country.name %>
+              <span><%= country.flag %></span>
+            </option>
+            <% }) %>
+          </select>
+
+          <!-- Mã Sản Phẩm -->
+          <label for="code">Mã Sản Phẩm:</label>
+          <input type="text" id="code" name="code" required />
+
+          <!-- Tên Sản Phẩm -->
+          <label for="name">Tên Sản Phẩm:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="description">Mô tả:</label>
+          <input type="text" id="description" name="description" />
+
+          <!-- Phương pháp rang -->
+          <label for="product_type">Phương pháp rang:</label>
+          <select name="product_type" id="product_type" required>
+            <option value="general">General</option>
+            <option value="specialty">Specialty</option>
+            <option value="lot">Lot</option>
+          </select>
+          <label for="brew_type">Phương pháp pha chế:</label>
+          <select name="brew_type" id="brew_type" required>
+            <option value="Pour">Pour</option>
+            <option value="Pour + Espresso">Pour + Espresso</option>
+            <option value="Espresso">Espresso</option>
+          </select>
+
+          <!-- Trọng lượng -->
+          <label for="weight">Trọng Lượng:</label>
+          <select name="weight" id="weight" required>
+            <option value="18 gram">18 gram</option>
+            <option value="200 gram">200 gram</option>
+            <option value="500 gram">500 gram</option>
+            <option value="1kg">1kg</option>
+            <option value="Vui lòng liên hệ">Vui lòng liên hệ</option>
+          </select>
+
+          <!-- Mức độ rang -->
+          <label for="roast_level">Mức Độ Rang:</label>
+          <select name="roast_level" id="roast_level" required>
+            <option value="Light">Light</option>
+            <option value="Light Medium">Light Medium</option>
+            <option value="Medium">Medium</option>
+            <option value="Medium-Dark">Medium-Dark</option>
+            <option value="Dark">Dark</option>
+            <option value="Very Dark">Very Dark</option>
+          </select>
+
+          <!-- Giá -->
+          <label for="price">Giá:</label>
+          <input type="number" id="price" name="price" required />
+
+          <!-- Giới hạn -->
+          <label for="limit">Giới Hạn:</label>
+          <input
+            type="number"
+            id="limit"
+            name="limit"
+            min="1"
+            placeholder="Nhập giới hạn"
+            value="1"
+          />
+          <!-- Mặc định là 2 -->
+
+          <button type="submit">Tạo Sản Phẩm</button>
+        </form>
+
+        <h2>Danh Sách Sản Phẩm</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Quốc Gia</th>
+              <th>Cờ</th>
+              <th>Mã Sản Phẩm</th>
+              <th>Tên Sản Phẩm</th>
+              <th>Sơ Chế</th>
+              <th>Phương pháp Pha</th>
+              <th>Trọng lượng</th>
+              <th>Mức Độ Rang</th>
+              <th>Mô Tả</th>
+              <th>Giá</th>
+              <th>Giới Hạn</th>
+              <th>Trạng Thái</th>
+              <th>Hành Động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% products.forEach(product => { %>
+            <tr>
+              <td><%= product.country?.name %></td>
+              <td><%= product.country?.flag %></td>
+              <td><%= product.product_code %></td>
+              <td><%= product.product_name %></td>
+              <td><%= product.product_type %></td>
+              <td><%= product.brew_type %></td>
+              <td><%= product.weight %></td>
+              <td><%= product.roast_level %></td>
+              <td><%= product.description %></td>
+              <td><%= product.price %></td>
+              <td><%= product.limit %></td>
+              <td><%= product.status === 'active' ? '✔️' : '❌' %></td>
+              <td>
+                <!-- Nút Edit -->
+                <button
+                  class="edit-btn"
+                  data-id="<%= product._id %>"
+                  data-country="<%= product.country._id %>"
+                  data-name="<%= product.product_name %>"
+                  data-method="<%= product.method %>"
+                  data-price="<%= product.price %>"
+                  data-description="<%= product.description %>"
+                  data-limit="<%= product.limit %>"
+                  data-code="<%= product.product_code %>"
+                  data-product_type="<%= product.product_type %>"
+                  data-brew_type="<%= product.brew_type %>"
+                  data-weight="<%= product.weight %>"
+                  data-roast_level="<%= product.roast_level %>"
+                >
+                  <i class="fa fa-edit" aria-hidden="true"></i> Sửa
+                </button>
+
+                <!-- Nút Delete -->
+                <button class="delete-btn">
+                  <i class="fa fa-trash" aria-hidden="true"></i> Xóa
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+
+        <!-- Phân trang -->
+        <div class="pagination">
+          <% if (currentPage > 1) { %>
+          <a href="?page=<%= currentPage - 1 %>" class="prev"
+            >&laquo; Previous</a
+          >
+          <% } %> <% for (let i = 1; i <= totalPages; i++) { %>
+          <a
+            href="?page=<%= i %>"
+            class="<%= i === currentPage ? 'active' : '' %>"
+            ><%= i %></a
+          >
+          <% } %> <% if (currentPage < totalPages) { %>
+          <a href="?page=<%= currentPage + 1 %>" class="next">Next &raquo;</a>
+          <% } %>
         </div>
+      </div>
     </div>
 
     <!-- Popup Edit Form -->
-    <div id="editPopup" style="display:none;">
-        <div class="popup-content">
-            <button class="close-btn">
-                <i class="fa fa-times" aria-hidden="true"></i> Close
-            </button>
-            <h3>Sửa Sản Phẩm</h3>
-            <form action="/admin/edit-product" method="POST">
-                <input type="hidden" name="_id" id="edit-id">
+    <div id="editPopup" style="display: none">
+      <div class="popup-content">
+        <button class="close-btn">
+          <i class="fa fa-times" aria-hidden="true"></i> Close
+        </button>
+        <h3>Sửa Sản Phẩm</h3>
+        <form action="/admin/edit-product" method="POST">
+          <input type="hidden" name="_id" id="edit-id" />
 
-                <!-- Quốc Gia -->
-                <label for="edit-country">Quốc Gia:</label>
-                <select name="country" id="edit-country" required>
-                    <% countries.forEach(country => { %>
-                        <option value="<%= country._id %>">
-                            <%= country.name %> 
-                            <span><%= country.flag %></span>
-                        </option>
-                    <% }) %>
-                </select>
-            
-                <!-- Mã Sản Phẩm -->
-                <label for="edit-code">Mã Sản Phẩm:</label>
-                <input type="text" id="edit-code" name="code" required>
-            
-                <!-- Tên Sản Phẩm -->
-                <label for="edit-name">Tên Sản Phẩm:</label>
-                <input type="text" id="edit-name" name="name" required>
-                
-                <label for="edit-description">Mô tả:</label>
-                <input type="text" id="edit-description" name="description">
-                
-                <!-- Phương pháp rang -->
-                <label for="edit-method">Phương pháp rang:</label>
-                <select name="edit-product_type" id="edit-product_type" required>
-                    <option value="general">General</option>
-                    <option value="specialty">Specialty</option>
-                    <option value="lot">Lot</option>
-                </select>
-            
-                <!-- Giá -->
-                <label for="edit-price">Giá:</label>
-                <input type="number" id="edit-price" name="price" required>
-            
-                <!-- Giới hạn -->
-                <label for="edit-limit">Giới Hạn:</label>
-                <input type="number" id="edit-limit" name="limit" min="1" placeholder="Nhập giới hạn" value="1">
-            
-                <button type="submit">Lưu Thay Đổi</button>
-            </form>
-        </div>
+          <!-- Quốc Gia -->
+          <label for="edit-country">Quốc Gia:</label>
+          <select name="country" id="edit-country" required>
+            <% countries.forEach(country => { %>
+            <option value="<%= country._id %>">
+              <%= country.name %>
+              <span><%= country.flag %></span>
+            </option>
+            <% }) %>
+          </select>
+
+          <!-- Mã Sản Phẩm -->
+          <label for="edit-code">Mã Sản Phẩm:</label>
+          <input type="text" id="edit-code" name="code" required />
+
+          <!-- Tên Sản Phẩm -->
+          <label for="edit-name">Tên Sản Phẩm:</label>
+          <input type="text" id="edit-name" name="name" required />
+
+          <label for="edit-description">Mô tả:</label>
+          <input type="text" id="edit-description" name="description" />
+
+          <!-- Phương pháp rang -->
+          <label for="edit-method">Phương pháp rang:</label>
+          <select name="edit-product_type" id="edit-product_type" required>
+            <option value="general">General</option>
+            <option value="specialty">Specialty</option>
+            <option value="lot">Lot</option>
+          </select>
+
+          <label for="edit-brew_type">Phương pháp pha chế:</label>
+          <select name="brew_type" id="edit-brew_type" required>
+            <option value="Pour">Pour</option>
+            <option value="Pour + Espresso">Pour + Espresso</option>
+            <option value="Espresso">Espresso</option>
+          </select>
+
+          <!-- Trọng lượng -->
+          <label for="edit-weight">Trọng Lượng:</label>
+          <select name="weight" id="edit-weight" required>
+            <option value="18 gram">18 gram</option>
+            <option value="200 gram">200 gram</option>
+            <option value="500 gram">500 gram</option>
+            <option value="1kg">1kg</option>
+            <option value="Vui lòng liên hệ">Vui lòng liên hệ</option>
+          </select>
+
+          <!-- Mức độ rang -->
+          <label for="edit-roast_level">Mức Độ Rang:</label>
+          <select name="roast_level" id="edit-roast_level" required>
+            <option value="Light">Light</option>
+            <option value="Light Medium">Light Medium</option>
+            <option value="Medium">Medium</option>
+            <option value="Medium-Dark">Medium-Dark</option>
+            <option value="Dark">Dark</option>
+            <option value="Very Dark">Very Dark</option>
+          </select>
+          <!-- Giá -->
+          <label for="edit-price">Giá:</label>
+          <input type="number" id="edit-price" name="price" required />
+
+          <!-- Giới hạn -->
+          <label for="edit-limit">Giới Hạn:</label>
+          <input
+            type="number"
+            id="edit-limit"
+            name="limit"
+            min="1"
+            placeholder="Nhập giới hạn"
+            value="1"
+          />
+
+          <button type="submit">Lưu Thay Đổi</button>
+        </form>
+      </div>
     </div>
 
     <script>
-        // Xử lý mở popup chỉnh sửa
-        $(document).ready(function() {
-            $(".edit-btn").click(function() {
-                // Lấy dữ liệu từ các thuộc tính data-* của nút
-                var id = $(this).data("id");
-                var country = $(this).data("country");
-                var name = $(this).data("name");
-                var code = $(this).data("code");
-                var product_type = $(this).data("product_type");
-                var price = $(this).data("price");
-                var description = $(this).data("description");
-                var limit = $(this).data("limit");
+      $(document).ready(function () {
+        $(".edit-btn").click(function () {
+          var id = $(this).data("id");
+          var country = $(this).data("country");
+          var name = $(this).data("name");
+          var code = $(this).data("code");
+          var product_type = $(this).data("product_type");
+          var price = $(this).data("price");
+          var description = $(this).data("description");
+          var limit = $(this).data("limit");
+          var brew_type = $(this).data("brew_type");
+          var weight = $(this).data("weight");
+          var roast_level = $(this).data("roast_level");
 
-                // Gán giá trị vào các trường input trong popup
-                $("#edit-id").val(id);
-                $("#edit-country").val(country).trigger('change'); // Đảm bảo Select2 cập nhật đúng khi chọn quốc gia
-                $("#edit-code").val(code);
-                $("#edit-name").val(name);
-                $("#edit-product_type").val(product_type);
-                $("#edit-price").val(price);
-                $("#edit-description").val(description);
-                $("#edit-limit").val(limit);
+          $("#edit-id").val(id);
+          $("#edit-country").val(country).trigger("change");
+          $("#edit-code").val(code);
+          $("#edit-name").val(name);
+          $("#edit-product_type").val(product_type);
+          $("#edit-price").val(price);
+          $("#edit-description").val(description);
+          $("#edit-limit").val(limit);
+          $("#edit-brew_type").val(brew_type);
+          $("#edit-weight").val(weight);
+          $("#edit-roast_level").val(roast_level);
 
-                // Hiển thị popup
-                $("#editPopup").show();
-            });
-
-            // Đóng popup
-            $(".close-btn").click(function() {
-                $("#editPopup").hide();
-            });
-
-            // Sử dụng Select2 cho dropdown quốc gia
-            $('#country').select2();
-            $('#edit-country').select2();
+          $("#editPopup").show();
         });
+
+        $("#country").select2();
+        $("#edit-country").select2();
+      });
     </script>
-</body>
+  </body>
 </html>
