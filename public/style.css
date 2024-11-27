@@ -137,8 +137,6 @@ h1 {
 .number-input-container {
     display: flex;
     align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
     padding: 0; /* Bỏ padding của container để không bị thừa */
     width: 100%; /* Đảm bảo container chiếm hết chiều rộng có sẵn */
     max-width: 120px; /* Giới hạn chiều rộng tối đa */
@@ -201,13 +199,39 @@ input[type="number"] {
 
     .mobile-cart-group {
         display: block; /* Gắn giỏ hàng theo nhóm */
+        border: 1px solid #ddd; /* Tạo khung cho nhóm sản phẩm */
+        border-radius: 12px; /* Bo góc khung mềm mại */
+        margin: 10px 0;
+        padding: 20px;
+        background-color: #f9f9f9; /* Màu nền nhẹ nhàng */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Bóng nhẹ cho giỏ hàng */
+        transition: box-shadow 0.3s ease; /* Hiệu ứng bóng khi hover */
+    }
+
+    .mobile-cart-group:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Tăng bóng khi hover */
     }
 
     .cart-item {
         display: flex; /* Sắp xếp theo hàng ngang */
         align-items: center; /* Căn giữa theo chiều dọc */
         justify-content: space-between; /* Cách đều các phần tử */
-        margin-bottom: 10px; /* Khoảng cách giữa các item */
+        margin-bottom: 15px; /* Khoảng cách giữa các item */
+        padding: 15px 10px;
+        border-radius: 10px; /* Bo góc sản phẩm */
+        background-color: #fff; /* Nền trắng cho từng item */
+        border: 1px solid #ddd; /* Đường viền cho từng item */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ */
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+
+    .cart-item:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Bóng đậm khi hover */
+        transform: translateY(-5px); /* Tạo hiệu ứng nâng lên khi hover */
+    }
+
+    .cart-item:last-child {
+        border-bottom: none; /* Xóa vạch ngăn cách của sản phẩm cuối cùng */
     }
 
     .item-details {
@@ -216,8 +240,9 @@ input[type="number"] {
     }
 
     .product-price {
-        color: red; /* Đổi màu tiền thành đỏ */
+        color: #FF5722; /* Màu cam tươi cho giá sản phẩm */
         font-weight: bold;
+        font-size: 18px; /* Tăng kích thước chữ cho giá */
     }
 
     .number-input-container {
@@ -229,26 +254,34 @@ input[type="number"] {
         text-align: center;
         width: 50px;
         margin: 0 5px;
+        border: 1px solid #ddd; /* Viền cho input */
+        border-radius: 5px; /* Bo góc cho input */
+        padding: 5px;
+    }
+
+    /* Giới hạn số lượng tối đa */
+    .number-input:valid {
+        max-width: 50px;
     }
 
     .order-summary {
         display: flex; /* Sử dụng flexbox để căn chỉnh */
         justify-content: space-between; /* Căn đều giữa tổng tiền và nút Đặt hàng */
         align-items: center;
-        padding: 10px;
+        padding: 20px;
         background-color: #fff; /* Màu nền cho phần tổng tiền và nút */
-        border-top: 1px solid #ddd; /* Đường viền giữa phần giỏ hàng và thanh đặt hàng */
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
+        border-radius: 10px; /* Bo góc */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Đổ bóng nhẹ cho phần tóm tắt */
     }
 
     .total-price {
-        font-size: 16px; /* Kích thước chữ cho tổng tiền */
+        font-size: 18px; /* Tăng kích thước chữ cho tổng tiền */
         font-weight: bold;
         color: #FF5722; /* Màu cam cho tổng tiền */
     }
 
     .order-button {
-        background-color: #FF5722; /* Màu cam giống Shopee */
+        background: linear-gradient(45deg, #FF5722, #FF7043); /* Gradient cho nút */
         color: white;
         font-size: 16px;
         font-weight: bold;
@@ -256,7 +289,7 @@ input[type="number"] {
         border: none;
         border-radius: 50px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease, transform 0.3s ease;
         padding: 15px;
         width: 40%; /* Đặt chiều rộng nút Đặt hàng */
         align-items: center;
@@ -265,12 +298,83 @@ input[type="number"] {
     }
 
     .order-button:hover {
-        background-color: #E64A19; /* Màu tối hơn khi hover */
+        background-color: #FF7043; /* Màu tối hơn khi hover */
+        transform: scale(1.05); /* Tăng kích thước nút khi hover */
     }
 
     .order-button:active {
-        background-color: #D84315; /* Màu khi nhấn */
+        background-color: #FF5722; /* Màu khi nhấn */
+        transform: scale(0.98); /* Thu nhỏ khi nhấn */
+    }
+
+    /* Thêm phần khung cho các sản phẩm */
+    .product-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); /* Tạo các cột sản phẩm tự động căn chỉnh */
+        gap: 15px; /* Khoảng cách giữa các sản phẩm */
+        margin-top: 20px;
+    }
+
+    .product-item {
+        border: 1px solid #ddd; /* Khung cho mỗi sản phẩm */
+        border-radius: 12px; /* Bo góc sản phẩm mềm mại */
+        padding: 15px;
+        background-color: #fff; /* Nền cho sản phẩm */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Đổ bóng cho sản phẩm */
+        transition: box-shadow 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
+    }
+
+    .product-item:hover {
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Bóng đậm hơn khi hover */
+        transform: translateY(-5px); /* Tạo hiệu ứng nâng lên khi hover */
+    }
+
+    .product-item img {
+        width: 100%; /* Hình ảnh chiếm hết chiều rộng */
+        border-radius: 10px; /* Bo góc cho hình ảnh */
+        object-fit: cover; /* Cắt ảnh để vừa khung */
+    }
+
+    .product-title {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+        text-align: center; /* Căn giữa tiêu đề sản phẩm */
+    }
+
+    .product-price {
+        font-size: 18px;
+        color: #FF5722; /* Màu cam cho giá sản phẩm */
+        margin-top: 10px;
+        text-align: center; /* Căn giữa giá sản phẩm */
+    }
+
+    .product-button {
+        background: linear-gradient(45deg, #FF5722, #FF7043); /* Gradient cho nút */
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-weight: bold;
+        margin-top: 10px;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .product-button:hover {
+        background-color: #FF7043; /* Màu tối hơn khi hover */
+        transform: scale(1.05); /* Tăng kích thước nút khi hover */
+    }
+
+    .product-button:active {
+        background-color: #FF5722; /* Màu khi nhấn */
+        transform: scale(0.98); /* Thu nhỏ khi nhấn */
     }
 }
+
+
+
 
 

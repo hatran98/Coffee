@@ -87,12 +87,14 @@
                                 <h4 class="product-name"><%= product.product_name %></h4>
                                 <p class="product-description"><%= product.description %></p>
                                 <p class="product-price">Giá: <%= product.price %> VND</p>
-                                <p class="product-limit">Giới hạn: <%= product.limit %> kg</p>
+                              <div style = "display: flex; justify-content: space-between" >
+                                <p class="product-limit">Giới hạn: <%= product.limit %></p>
                                 <div class="number-input-container">
                                     <button class="decrement">-</button>
                                     <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
                                     <button class="increment">+</button>
                                 </div>
+                              </div>
                             </div>
                         </div>
                     <% }); %>
