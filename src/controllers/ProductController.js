@@ -221,7 +221,6 @@ const getProducts = async (req, res) => {
       }
     ]);
 
-    console.log(productsByCountry);
 
     // Truyền dữ liệu nhóm sản phẩm theo country vào template
     res.render("index", { products: productsByCountry });

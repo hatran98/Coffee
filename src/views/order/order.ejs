@@ -125,7 +125,6 @@
         // Hàm lấy dữ liệu đơn hàng từ localStorage và cập nhật bảng
         function loadOrderDetails() {
             const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
-            console.log(orderDetails);
 
             if (orderDetails) {
                 let totalAmount = 0;

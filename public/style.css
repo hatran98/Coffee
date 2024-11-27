@@ -11,6 +11,14 @@ body {
     position: relative;
 }
 
+.desktop-view {
+    display: block;
+}
+
+.mobile-view {
+    display: none;
+}
+
 /* Container chính */
 .container {
     max-width: 1300px; /* Chiều rộng tối đa của nội dung */
@@ -99,7 +107,7 @@ h1 {
     font-size: 14px;
 }
 
-.order-button {
+.desktop-view .order-button {
     position: fixed;         /* Giữ cố định trên màn hình */
     bottom: 0.2em;            /* Cách mép dưới 50px */
     right: 0.8em;            /* Cách mép phải 100px */
@@ -180,104 +188,89 @@ input[type="number"] {
 }
 
 
-/* Media Queries cho Mobile */
+
+/* Cho màn hình nhỏ (mobile) */
 @media screen and (max-width: 768px) {
-    /* Container chính */
-    .container {
-        padding: 15px; /* Giảm padding */
+    .desktop-view {
+        display: none;
     }
 
-    /* Tiêu đề */
-    h1 {
-        font-size: 20px; /* Giảm kích thước font cho tiêu đề */
+    .mobile-view {
+        display: block;
     }
 
-    /* Thông tin liên hệ */
-    .contact-info {
-        font-size: 18px; /* Giảm kích thước font */
+    .mobile-cart-group {
+        display: block; /* Gắn giỏ hàng theo nhóm */
     }
 
-    /* Căn chỉnh lại quốc gia */
-    .country {
-        font-size: 16px; /* Giảm kích thước font */
-        justify-content: center; /* Căn giữa */
-        margin-top: 10px;
+    .cart-item {
+        display: flex; /* Sắp xếp theo hàng ngang */
+        align-items: center; /* Căn giữa theo chiều dọc */
+        justify-content: space-between; /* Cách đều các phần tử */
+        margin-bottom: 10px; /* Khoảng cách giữa các item */
     }
 
-    /* Điều chỉnh bảng */
-    .coffee-table th,
-    .coffee-table td {
-        font-size: 12px; /* Giảm kích thước font */
-        padding: 6px;    /* Giảm padding */
+    .item-details {
+        flex: 1; /* Chiếm toàn bộ khoảng trống */
+        margin-left: 10px;
     }
 
-    /* Điều chỉnh nút Order */
-    .order-button {
-        padding: 10px 18px;  /* Giảm padding */
-        font-size: 18px;     /* Giảm kích thước font */
-        max-width: 200px;    /* Giới hạn chiều rộng nút cho màn hình nhỏ */
-        min-width: 80px;     /* Đảm bảo nút không quá nhỏ */
+    .product-price {
+        color: red; /* Đổi màu tiền thành đỏ */
+        font-weight: bold;
     }
 
     .number-input-container {
-        max-width: 100px; /* Giảm kích thước container cho mobile */
+        display: flex;
+        align-items: center;
     }
 
     .number-input {
-        width: 25px; /* Giảm kích thước input cho mobile */
-        font-size: 12px; /* Giảm kích thước font cho mobile */
+        text-align: center;
+        width: 50px;
+        margin: 0 5px;
     }
 
-    button {
-        width: 25px; /* Giảm kích thước nút cho mobile */
-        height: 25px; /* Giảm chiều cao nút */
-        font-size: 12px; /* Giảm kích thước font cho mobile */
-    }
-}
-
-/* Responsive cho di động nhỏ */
-@media screen and (max-width: 480px) {
-    /* Tiêu đề */
-    h1 {
-        font-size: 18px; /* Giảm kích thước font tiêu đề */
+    .order-summary {
+        display: flex; /* Sử dụng flexbox để căn chỉnh */
+        justify-content: space-between; /* Căn đều giữa tổng tiền và nút Đặt hàng */
+        align-items: center;
+        padding: 10px;
+        background-color: #fff; /* Màu nền cho phần tổng tiền và nút */
+        border-top: 1px solid #ddd; /* Đường viền giữa phần giỏ hàng và thanh đặt hàng */
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Đổ bóng */
     }
 
-    /* Thông tin liên hệ */
-    .contact-info {
-        font-size: 16px; /* Giảm font-size */
+    .total-price {
+        font-size: 16px; /* Kích thước chữ cho tổng tiền */
+        font-weight: bold;
+        color: #FF5722; /* Màu cam cho tổng tiền */
     }
 
-    /* Quốc gia */
-    .country {
-        font-size: 14px; /* Giảm kích thước font */ 
-    }
-
-    /* Điều chỉnh bảng */
-    .coffee-table th,
-    .coffee-table td {
-        font-size: 10px; /* Giảm font-size bảng */
-        padding: 4px;    /* Giảm padding */
-    }
-
-    /* Điều chỉnh nút Order */
     .order-button {
-        padding: 8px 16px;   /* Giảm padding */
-        font-size: 16px;     /* Giảm kích thước font */
-        max-width: 150px;    /* Giới hạn chiều rộng nút cho màn hình cực nhỏ */
-        min-width: 70px;     /* Đảm bảo nút không quá nhỏ */
-    }
-    .number-input-container {
-        max-width: 80px; /* Giảm kích thước container cho màn hình nhỏ hơn */
+        background-color: #FF5722; /* Màu cam giống Shopee */
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        padding: 15px;
+        width: 40%; /* Đặt chiều rộng nút Đặt hàng */
+        align-items: center;
+        justify-content: center;
+        display: flex;
     }
 
-    .number-input {
-        width: 20px; /* Giảm chiều rộng input */
-        font-size: 10px; /* Giảm font size cho input */
+    .order-button:hover {
+        background-color: #E64A19; /* Màu tối hơn khi hover */
     }
 
-    button {
-        width: 20px; /* Giảm chiều rộng nút */
-        height: 20px; /* Giảm chiều cao nút */
-        font-size: 10px; /* Giảm font size cho nút */
+    .order-button:active {
+        background-color: #D84315; /* Màu khi nhấn */
     }
 }
+
+

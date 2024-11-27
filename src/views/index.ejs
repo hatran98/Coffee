@@ -8,12 +8,19 @@
 </head>
 <body>
     <div class="container">
-        <h1>Sản Phẩm 1/11/2024</h1>
-        <div class="section">
-            <div class="header-row">
-                <p class="contact-info">Lotus Farm 49 <br>Zalo 089-88888-68</br></p>
-            </div>
+        <!-- Tiêu đề báo giá -->
+        <h1 class="main-title">Sản Phẩm 1/11/2024</h1>
 
+        <!-- Thông tin liên hệ -->
+        <div class="header-row">
+            <p class="contact-info">
+                Lotus Farm 49<br>
+                Zalo: 089-88888-68
+            </p>
+        </div>
+
+        <!-- Giao diện desktop -->
+        <div class="section desktop-view">
             <% products.forEach(group => { %>
                 <div class="table-container">
                     <!-- Hiển thị cờ và tên quốc gia -->
@@ -22,47 +29,85 @@
                         <span class="text"><%= group.countryInfo.name %></span>
                     </p>
                     <table class="coffee-table">
-                        <tr>
-                            <th>Mã</th>
-                            <th>Coffee Name / Flavor Note</th>
-                            <th>Sơ Chế</th>
-                            <th>Loại pha</th>
-                            <th>Cân nặng</th>
-                            <th>Cấp độ rang</th>
-                            <th>Giá VND</th>
-                            <th>Limit</th>
-                            <th>Số Lượng</th>
-                        </tr>
-                        <% group.products.forEach(product => { %>
+                        <thead>
                             <tr>
-                                <td><%= product.product_code %></td>
-                                <td>
-                                    <p><%= product.product_name %></p>
-                                    <p><%= product.description %></p>
-                                </td>
-                                <td><%= product.product_type %></td>
-                                <td><%= product.brew_type %></td>
-                                <td><%= product.weight %></td>
-                                <td><%= product.roast_level %></td>
-                                <td><%= product.price %></td>
-                                <td><%= product.limit %></td>
-                                <td>
-                                    <div class="number-input-container">
-                                      <button class="decrement">-</button>
-                                      <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
-                                      <button class="increment">+</button>
-                                    </div>
-                                  </td>
+                                <th>Mã</th>
+                                <th>Coffee Name / Flavor Note</th>
+                                <th>Sơ Chế</th>
+                                <th>Loại pha</th>
+                                <th>Cân nặng</th>
+                                <th>Cấp độ rang</th>
+                                <th>Giá VND</th>
+                                <th>Limit</th>
+                                <th>Số Lượng</th>
                             </tr>
-                        <% }); %>
+                        </thead>
+                        <tbody>
+                            <% group.products.forEach(product => { %>
+                                <tr>
+                                    <td><%= product.product_code %></td>
+                                    <td>
+                                        <p class="product-name"><%= product.product_name %></p>
+                                        <p class="product-description"><%= product.description %></p>
+                                    </td>
+                                    <td><%= product.product_type %></td>
+                                    <td><%= product.brew_type %></td>
+                                    <td><%= product.weight %></td>
+                                    <td><%= product.roast_level %></td>
+                                    <td><%= product.price %></td>
+                                    <td><%= product.limit %></td>
+                                    <td>
+                                        <div class="number-input-container">
+                                            <button class="decrement">-</button>
+                                            <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
+                                            <button class="increment">+</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
                     </table>
                 </div>
             <% }); %>
-        </div>
         <button class="order-button">Đặt hàng</button>
-    </div>
-    <script src="js/order.js"></script> 
-    <script src="js/custom.js"></script> 
 
+        </div>
+
+        <!-- Giao diện mobile -->
+        <div class="section mobile-view">
+            <% products.forEach(group => { %>
+                <div class="mobile-cart-group">
+                    <h3 class="country-name">
+                        <span class="flag"><%= group.countryInfo.flag %></span>
+                        <%= group.countryInfo.name %>
+                    </h3>
+                    <% group.products.forEach(product => { %>
+                        <div class="cart-item">
+                            <div class="item-details">
+                                <h4 class="product-name"><%= product.product_name %></h4>
+                                <p class="product-description"><%= product.description %></p>
+                                <p class="product-price">Giá: <%= product.price %> VND</p>
+                                <p class="product-limit">Giới hạn: <%= product.limit %> kg</p>
+                                <div class="number-input-container">
+                                    <button class="decrement">-</button>
+                                    <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
+                                    <button class="increment">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% }); %>
+            <div class="order-summary">
+                <span class="total-price">Tổng tiền: 0 VND</span>
+                <button class="order-button">Đặt hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/order.js"></script>
+    <script src="js/orderMb.js"></script>
+    <script src="js/custom.js"></script>
 </body>
 </html>
