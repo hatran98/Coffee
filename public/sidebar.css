@@ -29,6 +29,7 @@
     font-size: 22px;
     font-weight: 600;
     margin: 0;
+    color:white;
 }
 
 /* Sidebar Menu */
@@ -84,7 +85,6 @@
         box-sizing: border-box; /* Đảm bảo padding không làm mở rộng chiều rộng */
         position: relative;
         margin-bottom: 20px; /* Thêm khoảng cách dưới sidebar */
-        
         /* Màu nền nhẹ nhàng và bo góc cho sidebar */
         background-color: #34495e;
         border-radius: 8px; /* Bo góc cho sidebar */
