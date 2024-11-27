@@ -102,14 +102,17 @@
         </div>
     </div>
     
+    <div id="modalOverlay" class="modal-overlay"></div>
+
+    <!-- Modal -->
     <div id="sepayModal" class="modal">
+        <button class="close-btn" onclick="closeModal('sepayModal')">&times;</button>
         <div class="modal-content">
-            <h2>Thanh toán qua SePay</h2>
-            <p>Quét mã QR dưới đây để thực hiện thanh toán qua SePay:</p>
-            <img id="sepayQrCode" src="" alt="QR Code">
-            <button onclick="closeModal('sepayModal')" class="modal-close">Đóng</button>
+            <h3>Quét mã QR để thanh toán</h3>
+            <img id="sepayQrCode" src="" alt="QR Code" />
         </div>
     </div>
+</div>
     
     <!-- Overlay nền tối -->
     <div id="overlay" class="overlay"></div>
@@ -155,47 +158,54 @@
         window.onload = loadOrderDetails;
 
         // Xử lý submit form và hiển thị modal
-        document.getElementById('orderForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
+        async function processPayment(orderData) {
+    try {
+        const response = await fetch('/sepay/process-sepay-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
 
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-    const fullName = document.getElementById('fullName').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
-    if (!fullName || !email || !phone) {
-        alert('Vui lòng điền đầy đủ thông tin khách hàng!');
-        return;
-    }
+        const data = await response.json();
+        console.log(data,"data");
 
-    if (paymentMethod === 'sepay') {
-        const orderData = {
-            fullName: fullName,
-            email: email,
-            phone: phone,
-            totalAmount: totalAmount,
-        };
-
-        try {
-            const response = await fetch('/sepay/create-payment-transaction', {  
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
-
-            const data = await response.json();
-            
-            if (data.success) {
-                // Hiển thị QR code
-                document.getElementById('sepayQrCode').src = data.qrCodeUrl;
-                openModal('sepayModal');  // Hiển thị modal chứa QR code
-            } else {
-                alert('Lỗi khi tạo giao dịch thanh toán: ' + data.message);
-            }
-        } catch (error) {
-            console.error('Lỗi khi gọi API thanh toán:', error);
-            alert('Có lỗi khi thanh toán, vui lòng thử lại.');
+        if (data.success) {
+            // Nếu thanh toán thành công, trả về URL mã QR
+            return data.qrCodeUrl;
+        } else {
+            alert('Thanh toán không thành công: ' + data.message);
+            return null;
         }
+    } catch (error) {
+        console.error('Có lỗi xảy ra khi thanh toán:', error);
+        alert('Có lỗi xảy ra khi thanh toán');
+        return null;
+    }
+}
+
+// Sử dụng hàm này trong sự kiện submit của form
+document.getElementById('orderForm').addEventListener('submit', async function (event) {
+    event.preventDefault(); 
+    const account = 9827071985
+    const bank = "KienLongBank"
+    const orderData = {
+        account: account, 
+        bank: bank, 
+        amount: parseFloat(document.getElementById('totalAmount').innerText),
+        description: "mua hàng" 
+    };
+
+    console.log("Processing payment...");
+    const qrCodeUrl = await processPayment(orderData);
+
+    if (qrCodeUrl) {
+        console.log("QR Code URL: ", qrCodeUrl);
+        document.getElementById('sepayQrCode').src = qrCodeUrl;
+        openModal('sepayModal');
+    } else {
+        console.log("No QR Code URL received");
     }
 });
 
@@ -236,6 +246,17 @@
                 alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
             });
         });
+
+        function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+    document.getElementById('modalOverlay').style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+}
+
     </script>
 </body>
 </html>
