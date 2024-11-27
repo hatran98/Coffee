@@ -1,0 +1,110 @@
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.admin-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+
+.sidebar h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Sidebar Menu */
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.3s;
+    display: block;
+    padding: 8px 0;
+}
+
+.sidebar ul li a:hover {
+    background-color: #34495e;
+    padding-left: 10px;
+}
+
+/* Logout Button */
+.logout-container {
+    margin-top: auto;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logout-btn {
+    background-color: #e74c3c;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    display: inline-block;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 100%; /* Sidebar chiếm toàn bộ chiều rộng */
+        padding: 15px; /* Thêm padding để tạo không gian cho nội dung */
+        box-sizing: border-box; /* Đảm bảo padding không làm mở rộng chiều rộng */
+        position: relative;
+        margin-bottom: 20px; /* Thêm khoảng cách dưới sidebar */
+        
+        /* Màu nền nhẹ nhàng và bo góc cho sidebar */
+        background-color: #34495e;
+        border-radius: 8px; /* Bo góc cho sidebar */
+        
+        /* Tạo bóng nhẹ cho sidebar để làm nổi bật */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bóng mờ */
+        
+        /* Đảm bảo không có thanh cuộn ngang */
+        overflow-x: hidden;
+        
+        /* Thêm border để làm rõ ràng hơn */
+        border: 1px solid #ddd; /* Viền mỏng và màu sắc nhẹ nhàng */
+        
+        /* Cải thiện tính tương tác */
+        transition: all 0.3s ease; /* Hiệu ứng khi hover hoặc thay đổi */
+    }
+    
+    .sidebar:hover {
+        /* Thêm hiệu ứng khi hover vào sidebar */
+        box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Tăng bóng khi hover */
+        background-color: #ffffff; /* Chuyển màu nền khi hover */
+    }
+}

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Quản lý Báo Giá</title>
+    <link rel="stylesheet" href="/sidebar.css" />
     <link rel="stylesheet" href="/admin.css" />
     <!-- Đường dẫn CSS -->
     <link
@@ -21,26 +22,7 @@
   </head>
   <body>
     <div class="admin-container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <img
-            src="/path/to/admin-avatar.jpg"
-            alt="Admin Avatar"
-            class="admin-avatar"
-          />
-          <h2>Quản Lý</h2>
-        </div>
-        <ul>
-          <li><a href="/admin">Quản lý sản phẩm</a></li>
-          <li><a href="/admin/orders">Quản lý đơn hàng</a></li>
-          <li><a href="/admin/settings">Cài đặt</a></li>
-        </ul>
-        <div class="logout-container">
-          <a href="/logout" class="logout-btn">Đăng Xuất</a>
-        </div>
-      </div>
-
+      <%- include('sidebar') %>
       <!-- Main Content -->
       <div class="main-content">
         <h1>Quản Lý Sản Phẩm</h1>

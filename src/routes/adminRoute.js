@@ -36,5 +36,8 @@ router.post('/admin/create-quote', createQuote);  // Xử lý tạo báo giá
 router.post('/admin/edit-product',updateProduct , (req , res) => {
     res.redirect('/admin');
 })
+router.get('/admin/orders', (req, res) => {
+    res.render('admin/order');
+});
 
 module.exports = router;
