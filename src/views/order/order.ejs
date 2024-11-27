@@ -69,14 +69,19 @@
             
             <!-- Phương thức thanh toán -->
             <div class="payment-method">
+                <!-- Thanh toán qua SePay sẽ được chọn mặc định -->
                 <label class="payment-option">
-                    <input type="radio" name="paymentMethod" value="sepay" required>
+                    <input type="radio" name="paymentMethod" value="sepay" required checked>
                     Thanh toán qua SePay
                 </label>
+                
+                <!-- Tạm thời comment lại phương thức thanh toán COD -->
+                <!--
                 <label class="payment-option">
                     <input type="radio" name="paymentMethod" value="cod" required>
                     Thanh toán khi nhận hàng (COD)
                 </label>
+                -->
             </div>
 
             <!-- Nút Đặt hàng -->
@@ -150,58 +155,87 @@
         window.onload = loadOrderDetails;
 
         // Xử lý submit form và hiển thị modal
-        document.getElementById('orderForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Ngừng submit form
+        document.getElementById('orderForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-
-            if (paymentMethod === 'cod') {
-                // Hiển thị modal COD
-                openModal('codModal');
-            } else if (paymentMethod === 'sepay') {
-                // Giả sử mã QR SePay được tạo sẵn từ server
-                document.getElementById('sepayQrCode').src = 'path/to/sepay-qr-code.png'; // Thay thế bằng đường dẫn thực tế
-                openModal('sepayModal');
-            }
-        });
-
-        document.getElementById('applyDiscount').addEventListener('click', function() {
-    const discountCode = document.getElementById('discountCode').value; // Lấy mã giảm giá từ input
-
-    // Kiểm tra nếu người dùng chưa nhập mã giảm giá
-    if (!discountCode) {
-        alert('Vui lòng nhập mã giảm giá!');
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+    if (!fullName || !email || !phone) {
+        alert('Vui lòng điền đầy đủ thông tin khách hàng!');
         return;
     }
 
-    // Gửi mã giảm giá đến BE để xác thực
-    fetch('/check-discount', {  // Đổi URL này thành URL endpoint của backend của bạn
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ discountCode: discountCode })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.valid) {
-            // Mã giảm giá hợp lệ, tính toán lại tổng tiền
-            const discountAmount = data.discountAmount;
-            const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
-            const newTotal = totalAmount - discountAmount;
+    if (paymentMethod === 'sepay') {
+        const orderData = {
+            fullName: fullName,
+            email: email,
+            phone: phone,
+            totalAmount: totalAmount,
+        };
 
-            // Cập nhật lại tổng tiền sau khi giảm giá
-            document.getElementById('totalAmount').innerText = newTotal.toFixed(2);
-            alert('Mã giảm giá đã được áp dụng!');
-        } else {
-            alert('Mã giảm giá không hợp lệ!');
+        try {
+            const response = await fetch('/sepay/create-payment-transaction', {  
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                // Hiển thị QR code
+                document.getElementById('sepayQrCode').src = data.qrCodeUrl;
+                openModal('sepayModal');  // Hiển thị modal chứa QR code
+            } else {
+                alert('Lỗi khi tạo giao dịch thanh toán: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Lỗi khi gọi API thanh toán:', error);
+            alert('Có lỗi khi thanh toán, vui lòng thử lại.');
         }
-    })
-    .catch(error => {
-        console.error('Có lỗi xảy ra:', error);
-        alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
-    });
+    }
 });
+
+        document.getElementById('applyDiscount').addEventListener('click', function() {
+            const discountCode = document.getElementById('discountCode').value; // Lấy mã giảm giá từ input
+
+            // Kiểm tra nếu người dùng chưa nhập mã giảm giá
+            if (!discountCode) {
+                alert('Vui lòng nhập mã giảm giá!');
+                return;
+            }
+
+            // Gửi mã giảm giá đến BE để xác thực
+            fetch('/check-discount', {  // Đổi URL này thành URL endpoint của backend của bạn
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ discountCode: discountCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.valid) {
+                    // Mã giảm giá hợp lệ, tính toán lại tổng tiền
+                    const discountAmount = data.discountAmount;
+                    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+                    const newTotal = totalAmount - discountAmount;
+
+                    // Cập nhật lại tổng tiền sau khi giảm giá
+                    document.getElementById('totalAmount').innerText = newTotal.toFixed(2);
+                    alert('Mã giảm giá đã được áp dụng!');
+                } else {
+                    alert('Mã giảm giá không hợp lệ!');
+                }
+            })
+            .catch(error => {
+                console.error('Có lỗi xảy ra:', error);
+                alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
+            });
+        });
     </script>
 </body>
 </html>
