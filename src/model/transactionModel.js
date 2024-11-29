@@ -3,7 +3,12 @@ const Schema = mongoose.Schema;
 
 // Định nghĩa schema cho Transaction
 const transactionSchema = new Schema(
+  
   {
+    transactionId: {
+      type: String,
+      required: true,
+    },
     gateway: {
       type: String,
       required: true, // Cổng thanh toán (ví dụ: KienLongBank)
@@ -49,6 +54,10 @@ const transactionSchema = new Schema(
       type: Number,
       default: 0, // Số dư tích lũy
     },
+    orderId : {
+      type: String,
+      required: true
+    }
   },
   {
     timestamps: true, // Tự động thêm createdAt và updatedAt

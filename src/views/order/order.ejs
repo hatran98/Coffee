@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đặt Hàng</title>
     <link href="/order.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -111,7 +112,7 @@
             <h3>Quét mã QR để thanh toán</h3>
             <img id="sepayQrCode" src="" alt="QR Code" />
             <p id="paymentInfo" style="text-align: center; margin-top: 10px;">
-                Nếu đã thanh toán rồi, <a href="javascript:void(0);" onclick="markAsPaid()">ấn vào đây</a>
+                Nếu đã thanh toán rồi, <a href="javascript:void(0);" onclick="checkPaymentStatus()">ấn vào đây</a>
             </p>
         </div>
        
@@ -122,6 +123,7 @@
     <div id="overlay" class="overlay"></div>
 
     <script>
+        
         // Hàm mở modal
         function openModal(modalId) {
             document.getElementById(modalId).style.display = "block";  // Hiển thị modal
@@ -173,7 +175,6 @@
         });
 
         const data = await response.json();
-        console.log(data,"data");
 
         if (data.success) {
             // Nếu thanh toán thành công, trả về URL mã QR
@@ -223,9 +224,10 @@ document.getElementById('orderForm').addEventListener('submit', async function (
         });
 
         const createOrderResult = await createOrderResponse.json();
-        console.log(createOrderResult,"createOrderResult");
         const orderId = createOrderResult.order._id; 
-        console.log(orderId,"orderId");
+        if (orderId) {
+            localStorage.setItem('orderId', orderId);
+        }
         const paymentData = {
             account:"101499100004005247",
             bank: "KienLongBank",
@@ -235,7 +237,6 @@ document.getElementById('orderForm').addEventListener('submit', async function (
 
         const qrCodeUrl = await processPayment(paymentData);
 
-        console.log(qrCodeUrl)
         if (qrCodeUrl) {
             document.getElementById('sepayQrCode').src = qrCodeUrl;
             openModal('sepayModal');
@@ -295,6 +296,34 @@ function closeModal(modalId) {
     document.getElementById('modalOverlay').style.display = 'none';
 }
 
-    </script>
+async function checkPaymentStatus() {
+    try {
+        // Lấy ID đơn hàng từ URL hoặc localStorage (tuỳ theo cách bạn lưu trữ)
+        const orderId = localStorage.getItem('orderId');
+
+        // Gọi API để kiểm tra trạng thái thanh toán
+        const response = await fetch(`/sepay/check-payment/${orderId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (data.success === true) {
+    alert('Thanh toán thành công!');
+    localStorage.removeItem('orderId');
+    localStorage.removeItem('orderDetails');
+    window.location.href = '/'
+} else {
+   confirm("Đơn hàng chưa thanh toán , vui lòng kiểm tra lại")
+}
+    } catch (error) {
+        console.error('Lỗi khi gọi API:', error);
+        alert('Đã có lỗi xảy ra khi kiểm tra trạng thái thanh toán.');
+    }
+}
+</script>
 </body>
 </html>

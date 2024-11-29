@@ -1,5 +1,6 @@
 const axios = require('axios');
 const transaction = require('../model/transactionModel');
+const order = require('../model/orderModel');
 const processPayment = async (req,res) => {
     const { account, bank, amount, description } = req.body;
 
@@ -25,8 +26,6 @@ const generateSePayQrCodeUrl = (account, bank, amount, description) => {
 
 const fallback = async (req, res) => {
     try {
-      console.log("Received GET request for fallback:", req.body);
-  
       const {
         gateway,
         transactionDate,
@@ -39,11 +38,24 @@ const fallback = async (req, res) => {
         transferAmount,
         referenceCode,
         accumulated,
-        id, // Lấy id từ req.body
+        id, // Thay đổi từ id sang transactionId
       } = req.body;
   
-      // Kiểm tra xem transaction với ID này đã tồn tại chưa
-      const existingTransaction = await transaction.findById(id);
+      // Biểu thức chính quy để lấy mã đơn hàng từ content
+      const regex = /Thanh toan don hang (\w{24})/; // Biểu thức chính quy tìm mã đơn hàng 24 ký tự
+      const match = content.match(regex);
+      
+      // Kiểm tra xem có tìm thấy mã đơn hàng trong content không
+      if (!match || !match[1]) {
+        return res.status(400).json({
+          message: "Order ID not found in content",
+        });
+      }
+      
+      const orderId = match[1]; // Lấy mã đơn hàng
+  
+      // Kiểm tra xem transaction với transactionId đã tồn tại chưa
+      const existingTransaction = await transaction.findOne({ transactionId: id });
       if (existingTransaction) {
         return res.status(400).json({
           message: "Transaction with this ID already exists",
@@ -52,7 +64,7 @@ const fallback = async (req, res) => {
   
       // Tạo mới transaction
       const newTransaction = await transaction.create({
-        id, // Sử dụng id từ req.body
+        transactionId: id, 
         gateway,
         transactionDate,
         accountNumber,
@@ -64,7 +76,20 @@ const fallback = async (req, res) => {
         transferAmount,
         referenceCode,
         accumulated,
+        orderId, 
       });
+
+      const updatedOrder = await order.findOneAndUpdate(
+        { _id: orderId },
+        { $set: { payment_status: "paid" } },
+        { new: true }
+      );
+  
+      if (!updatedOrder) {
+        return res.status(404).json({
+          message: "Order not found",
+        });
+      }
   
       return res.status(201).json({
         message: "Transaction saved successfully",
@@ -80,18 +105,29 @@ const fallback = async (req, res) => {
   };
   
 
-const checkPayment = async (req, res) => {
-    const { id } = req.params;  
+  
+
+
+  const checkPayment = async (req, res) => {
+    const { orderId } = req.params;  // Nhận orderId từ params
+
     try {
-        const transaction = await transaction.findByPk(id);
-        if (!transaction) {
+        // Kiểm tra nếu orderId là số, chuyển về chuỗi để khớp với SchemaString trong DB
+        const orderIdString = String(orderId);
+
+        // Tìm transaction với orderId (chú ý tìm với orderId là chuỗi)
+        const transactionData = await transaction.findOne({ orderId: orderIdString });
+
+        if (!transactionData) {
             return res.status(404).json({ success: false, message: 'Transaction not found' });
         }
-        return res.json({ success: true, message: 'Transaction found', transaction });
-    }
-    catch (error) {
+
+        return res.json({ success: true, message: 'Transaction found', transactionData });
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
+
 
 module.exports = {processPayment , fallback , checkPayment };

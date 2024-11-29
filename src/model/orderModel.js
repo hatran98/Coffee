@@ -10,7 +10,7 @@ const OrderSchema = new Schema({
       price: { type: Number, required: true }, 
     },
   ],
-  status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
   payment_method: { type: String, enum: ['cod', 'sepay'], default: 'sepay' },
   payment_status: { type: String, enum: ['unpaid', 'paid', 'cancelled'], default: 'unpaid' },
   total_price: { type: Number, required: true }, 

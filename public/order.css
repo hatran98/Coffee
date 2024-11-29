@@ -231,6 +231,8 @@ body {
     width: 100%;
     height: auto;
     margin-top: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 /* Responsive cho màn hình nhỏ */
@@ -274,4 +276,5 @@ body {
     .payment-option {
         font-size: 14px;
     }
+    
 }
