@@ -42,8 +42,9 @@ const fallback = async (req, res) => {
         id, // Lấy id từ req.body
       } = req.body;
   
+      console.log("content" , content)
       // Kiểm tra xem transaction với ID này đã tồn tại chưa
-      const existingTransaction = await Transaction.findByPk(id);
+      const existingTransaction = await transaction.findByPk(id);
       if (existingTransaction) {
         return res.status(400).json({
           message: "Transaction with this ID already exists",
@@ -65,6 +66,7 @@ const fallback = async (req, res) => {
         referenceCode,
         accumulated,
       });
+
   
       return res.status(201).json({
         message: "Transaction saved successfully",
