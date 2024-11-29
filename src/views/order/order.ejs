@@ -110,7 +110,11 @@
         <div class="modal-content">
             <h3>Quét mã QR để thanh toán</h3>
             <img id="sepayQrCode" src="" alt="QR Code" />
+            <p id="paymentInfo" style="text-align: center; margin-top: 10px;">
+                Nếu đã thanh toán rồi, <a href="javascript:void(0);" onclick="markAsPaid()">ấn vào đây</a>
+            </p>
         </div>
+       
     </div>
 </div>
     
@@ -219,12 +223,14 @@ document.getElementById('orderForm').addEventListener('submit', async function (
         });
 
         const createOrderResult = await createOrderResponse.json();
+        console.log(createOrderResult,"createOrderResult");
         const orderId = createOrderResult.order._id; 
+        console.log(orderId,"orderId");
         const paymentData = {
             account:"101499100004005247",
             bank: "KienLongBank",
             amount: totalAmount,
-            description: `Thanh toán đơn hàng #${orderId}`
+            description: `Thanh toán đơn hàng ${orderId}`
         };
 
         const qrCodeUrl = await processPayment(paymentData);
