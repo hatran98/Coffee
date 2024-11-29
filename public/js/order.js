@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     orderButton.addEventListener('click', function () {
         const orderDetails = [];
 
-        const productRows = document.querySelectorAll('.coffee-table tr');
-
+        const productRows = document.   querySelectorAll('.coffee-table tr');
         productRows.forEach(row => {
             const quantityInput = row.querySelector('.number-input');
             

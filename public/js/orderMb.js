@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             console.log(productPrice)
 ;                            // Thêm thông tin sản phẩm vào danh sách đơn hàng
                             orderDetails.push({
+                                id:product._id,
                                 productCode: productCode,
                                 productName: productName,
                                 quantity: quantity,

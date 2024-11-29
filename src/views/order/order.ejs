@@ -187,28 +187,60 @@
 
 // Sử dụng hàm này trong sự kiện submit của form
 document.getElementById('orderForm').addEventListener('submit', async function (event) {
-    event.preventDefault(); 
-    const account = 9827071985
-    const bank = "KienLongBank"
+    event.preventDefault(); // Ngăn hành vi mặc định của form
+
+    // Lấy thông tin đơn hàng từ form
+    const fullName = document.getElementById('fullName').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const discountCode = document.getElementById('discountCode').value || null;
+    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+
+    // Tạo object dữ liệu cho đơn hàng
     const orderData = {
-        account: account, 
-        bank: bank, 
-        amount: parseFloat(document.getElementById('totalAmount').innerText),
-        description: "mua hàng" 
+        customer: {
+            fullName: fullName,
+            email: email,
+            phone: phone
+        },
+        discountCode: discountCode,
+        amount: totalAmount,
+        products: JSON.parse(localStorage.getItem('orderDetails') || '[]') // Lấy thông tin sản phẩm từ localStorage
     };
 
-    console.log("Processing payment...");
-    const qrCodeUrl = await processPayment(orderData);
+    try {
+        // Gọi API để tạo đơn hàng
+        const createOrderResponse = await fetch('/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
 
-    if (qrCodeUrl) {
-        console.log("QR Code URL: ", qrCodeUrl);
-        document.getElementById('sepayQrCode').src = qrCodeUrl;
-        openModal('sepayModal');
-    } else {
-        console.log("No QR Code URL received");
+        const createOrderResult = await createOrderResponse.json();
+        const orderId = createOrderResult.order._id; 
+        const paymentData = {
+            account:"101499100004005247",
+            bank: "KienLongBank",
+            amount: totalAmount,
+            description: `Thanh toán đơn hàng #${orderId}`
+        };
+
+        const qrCodeUrl = await processPayment(paymentData);
+
+        console.log(qrCodeUrl)
+        if (qrCodeUrl) {
+            document.getElementById('sepayQrCode').src = qrCodeUrl;
+            openModal('sepayModal');
+        } else {
+            console.error("No QR Code URL received");
+        }
+    } catch (error) {
+        console.error("Lỗi khi xử lý đơn hàng hoặc thanh toán:", error);
+        alert("Đã có lỗi xảy ra. Vui lòng thử lại sau.");
     }
 });
-
         document.getElementById('applyDiscount').addEventListener('click', function() {
             const discountCode = document.getElementById('discountCode').value; // Lấy mã giảm giá từ input
 

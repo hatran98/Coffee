@@ -5,12 +5,14 @@ const OrderSchema = new Schema({
   customer_name: { type: String, required: true },
   products: [
     {
-      product_id: { type: Schema.Types.ObjectId, ref: 'ProductModel', required: true },
+      product_code: { type: String, ref: 'ProductModel', required: true },
       quantity: { type: Number, required: true, min: 1 },
       price: { type: Number, required: true }, 
     },
   ],
-  limit: { type: Number, required: true },
+  status: { type: String, enum: ['pending', 'paid', 'cancelled'], default: 'pending' },
+  payment_method: { type: String, enum: ['cod', 'sepay'], default: 'sepay' },
+  payment_status: { type: String, enum: ['unpaid', 'paid', 'cancelled'], default: 'unpaid' },
   total_price: { type: Number, required: true }, 
   created_at: { type: Date, default: Date.now },
 });

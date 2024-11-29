@@ -1,5 +1,5 @@
 const axios = require('axios');
-
+const transaction = require('../model/transactionModel');
 const processPayment = async (req,res) => {
     const { account, bank, amount, description } = req.body;
 
@@ -24,31 +24,74 @@ const generateSePayQrCodeUrl = (account, bank, amount, description) => {
 
 
 const fallback = async (req, res) => {
-    console.log("Received GET request for fallback:", req.body);
-
-    const { transaction_id, status, order_id, amount } = req.body;
-
-    if (status === 'success') {
-        try {
-            await updateOrderStatus(order_id, 'paid'); 
-            return res.status(200).json({
-                success: true,
-                message: "Order payment confirmed and updated"
-            });
-        } catch (error) {
-            console.error("Error updating order status:", error);
-            return res.status(500).json({
-                success: false,
-                message: "Error updating order status"
-            });
-        }
-    } else {
-        return res.status(200).json({
-            success: false,
-            message: "Payment failed or unknown status"
+    try {
+      console.log("Received GET request for fallback:", req.body);
+  
+      const {
+        gateway,
+        transactionDate,
+        accountNumber,
+        subAccount,
+        code,
+        content,
+        transferType,
+        description,
+        transferAmount,
+        referenceCode,
+        accumulated,
+        id, // Lấy id từ req.body
+      } = req.body;
+  
+      // Kiểm tra xem transaction với ID này đã tồn tại chưa
+      const existingTransaction = await Transaction.findByPk(id);
+      if (existingTransaction) {
+        return res.status(400).json({
+          message: "Transaction with this ID already exists",
         });
+      }
+  
+      // Tạo mới transaction
+      const newTransaction = await Transaction.create({
+        id, // Sử dụng id từ req.body
+        gateway,
+        transactionDate,
+        accountNumber,
+        subAccount,
+        code,
+        content,
+        transferType,
+        description,
+        transferAmount,
+        referenceCode,
+        accumulated,
+      });
+  
+      return res.status(201).json({
+        message: "Transaction saved successfully",
+        transaction: newTransaction,
+      });
+    } catch (error) {
+      console.error("Error saving transaction:", error);
+      return res.status(500).json({
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  };
+  
+
+const checkPayment = async (req, res) => {
+    const { id } = req.params;  
+    try {
+        const transaction = await transaction.findByPk(id);
+        if (!transaction) {
+            return res.status(404).json({ success: false, message: 'Transaction not found' });
+        }
+        return res.json({ success: true, message: 'Transaction found', transaction });
+    }
+    catch (error) {
+        return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
 
-
-module.exports = {processPayment , fallback };
+module.exports = {processPayment , fallback , checkPayment };
