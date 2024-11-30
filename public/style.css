@@ -303,8 +303,10 @@ input[type="number"] {
 
 /* Cho màn hình nhỏ (mobile) */
 @media screen and (max-width: 768px) {
+  
     .container {
         background-color: #362424;
+        border-radius: 0%;
     }
     .desktop-view {
         display: none;
