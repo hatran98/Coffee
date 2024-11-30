@@ -6,7 +6,9 @@ const discountSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true, // Đảm bảo mã giảm giá là duy nhất
-    },
+        minlength: [10, 'Mã giảm giá phải có ít nhất 10 ký tự'],
+        maxlength: [10, 'Mã giảm giá không được vượt quá 10 ký tự'],
+      },
     amount: {
         type: Number,
         required: true, // Giá trị giảm giá
@@ -33,7 +35,7 @@ const discountSchema = new mongoose.Schema({
         ref: 'Order', // Nếu bạn lưu thông tin về đơn hàng, liên kết với bảng đơn hàng
         required: false, 
     }
-}, {
+}, { 
     timestamps: true, // Tự động thêm `createdAt` và `updatedAt` vào mỗi bản ghi
 });
 

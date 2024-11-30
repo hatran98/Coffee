@@ -98,10 +98,10 @@
                     <form id="discount-form" action="/settings/update-discount" method="POST">
                         <div>
                             <label for="discount_code">Mã giảm giá:</label>
-                            <input type="text" name="discount_code" id="discount_code" placeholder="Nhập mã giảm giá"
-                                required>
+                            <input type="text" name="discount_code" id="discount_code" placeholder="Nhập mã giảm giá" required 
+                                   pattern="^[A-Za-z0-9]{10}$" title="Mã giảm giá phải gồm 10 ký tự alphanumeric">
                         </div>
-
+                
                         <div>
                             <label for="discount_type">Kiểu giảm giá:</label>
                             <select name="discount_type" id="discount_type" required>
@@ -109,31 +109,32 @@
                                 <option value="fixed">Giảm theo giá trị cố định</option>
                             </select>
                         </div>
-
+                
                         <!-- Trường giảm giá theo phần trăm -->
                         <div id="discount_percentage_wrapper" class="discount_field">
                             <label for="discount_percentage">Tỷ lệ giảm giá (%):</label>
                             <input type="number" name="discount_percentage" id="discount_percentage"
                                 placeholder="Nhập tỷ lệ giảm giá">
                         </div>
-
+                
                         <!-- Trường giảm giá theo tiền -->
                         <div id="discount_fixed_wrapper" class="discount_field" style="display: none;">
                             <label for="discount_fixed">Số tiền giảm giá:</label>
                             <input type="number" name="discount_fixed" id="discount_fixed"
                                 placeholder="Nhập số tiền giảm giá">
                         </div>
-
+                
                         <div>
                             <label for="expiration_date">Ngày hết hạn:</label>
                             <input type="date" name="expiration_date" id="expiration_date" required>
                         </div>
-
+                
                         <div>
                             <button type="submit">Lưu Giảm Giá</button>
                         </div>
                     </form>
                 </div>
+                
 
 
             </div>

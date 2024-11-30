@@ -1,6 +1,7 @@
 const axios = require('axios');
 const transaction = require('../model/transactionModel');
 const order = require('../model/orderModel');
+const Discount = require('../model/discountModel');
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const bot = new TelegramBot(process.env.TELEGRAM_BOT_TOKEN, { polling: true });
@@ -44,10 +45,9 @@ const fallback = async (req, res) => {
         } = req.body;
 
         // Biểu thức chính quy để lấy mã đơn hàng từ content
-        const orderRegex = /Thanh toan don hang (\w{24})/;  // Tìm mã đơn hàng 24 ký tự
-        const discountRegex = /Mã giảm giá: (\w{10})/;    // Giả sử mã giảm giá có 10 ký tự
+        const orderRegex = /Don hang (\w{24})/;  // Tìm mã đơn hàng 24 ký tự
+        const discountRegex = /Ma (\w{10})/;    
 
-        // Lấy mã đơn hàng từ content
         const orderMatch = content.match(orderRegex);
         if (!orderMatch || !orderMatch[1]) {
             return res.status(400).json({
@@ -57,10 +57,12 @@ const fallback = async (req, res) => {
 
         const orderId = orderMatch[1]; // Mã đơn hàng
 
+        console.log(orderId,"orderId");
         // Lấy mã giảm giá từ content nếu có
         const discountMatch = content.match(discountRegex);
         const discountCode = discountMatch ? discountMatch[1] : null; // Nếu có mã giảm giá, lấy, nếu không thì là null
 
+        console.log(discountCode,"discountCode");
         // Kiểm tra xem transaction với transactionId đã tồn tại chưa
         const existingTransaction = await transaction.findOne({ transactionId: id });
         if (existingTransaction) {
@@ -76,7 +78,7 @@ const fallback = async (req, res) => {
             transactionDate,
             accountNumber,
             subAccount,
-            code,
+            code:discountCode,
             content,
             transferType,
             description,
@@ -84,8 +86,13 @@ const fallback = async (req, res) => {
             referenceCode,
             accumulated,
             orderId,
-            discountCode, // Thêm discountCode vào transaction
         });
+
+        const discountUpdate = await Discount.findOneAndUpdate(
+            { code: discountCode },
+            { $set: { used: true, usedByOrderId: orderId } },
+            { new: true }
+        )
 
         // Lấy chi tiết đơn hàng
         const orderDetail = await order.findOne({ _id: orderId });

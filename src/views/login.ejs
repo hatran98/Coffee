@@ -1,26 +1,105 @@
-<!-- views/login.ejs -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đăng nhập</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+
+    input:focus {
+      border-color: #4caf50;
+      outline: none;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .error-message {
+      color: red;
+      text-align: center;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Đăng nhập vào hệ thống</h1>
-  
-  <form action="/login" method="POST">
-    <label for="username">Tên đăng nhập</label>
-    <input type="text" name="username" id="username" required />
-    
-    <label for="password">Mật khẩu</label>
-    <input type="password" name="password" id="password" required />
-    
-    <button type="submit">Đăng nhập</button>
-  </form>
 
-  <% if (errorMessage) { %>
-    <p style="color: red;"><%= errorMessage %></p>
-  <% } %>
+  <div class="login-container">
+    <h1>Đăng nhập vào hệ thống</h1>
+
+    <form action="/login" method="POST">
+      <label for="username">Tên đăng nhập</label>
+      <input type="text" name="username" id="username" required />
+
+      <label for="password">Mật khẩu</label>
+      <input type="password" name="password" id="password" required />
+
+      <button type="submit">Đăng nhập</button>
+    </form>
+
+    <% if (errorMessage) { %>
+      <p class="error-message"><%= errorMessage %></p>
+    <% } %>
+  </div>
+
 </body>
 </html>

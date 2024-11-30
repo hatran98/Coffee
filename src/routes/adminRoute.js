@@ -5,6 +5,7 @@ const Product = require('../model/productModel');
 const Order = require('../model/orderModel');
 const User = require('../model/userModel');
 const Settings = require('../model/settingModel');
+const Discount = require('../model/discountModel');
 const { createQuote , updateProduct } = require('../controllers/ProductController');
 const {fetchOrder} = require('../controllers/OrderController')
 const checkAdmin = require('../middlewares/jwtMiddleware');
@@ -85,4 +86,14 @@ router.get('/admin/settings', checkAdmin, async (req, res) => {
         res.status(500).send('Lỗi server');
     }
 });
+
+router.get('/admin/discounts', checkAdmin, async (req, res) => {
+    try {
+        const discounts = await Discount.find();
+        res.render('admin/discounts', { discounts });
+    } catch (error) {
+        console.error('Lỗi khi lấy danh sách khóa giải:', error);
+        res.status(500).send('Lỗi server');
+    }
+})
 module.exports = router;

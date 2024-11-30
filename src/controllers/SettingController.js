@@ -138,49 +138,6 @@ const updateDiscount = async (req, res) => {
   }
 };
 
-const useDiscount = async (req, res) => {
-  try {
-    const { code } = req.params;  // Lấy mã giảm giá từ params
-    const { orderId } = req.body;  // Lấy orderId từ request body
-    
-    // Tìm mã giảm giá trong cơ sở dữ liệu
-    const discount = await Discount.findOne({ code });
-
-    // Kiểm tra xem mã giảm giá có tồn tại không
-    if (!discount) {
-      return res.status(404).json({ message: 'Mã giảm giá không tồn tại' });
-    }
-
-    // Kiểm tra xem mã giảm giá đã được sử dụng chưa
-    if (discount.used) {
-      return res.status(400).json({ message: 'Mã giảm giá đã được sử dụng' });
-    }
-
-    // Cập nhật mã giảm giá thành đã sử dụng và lưu orderId
-    discount.used = true;
-    discount.usedByOrderId = orderId;
-
-    // Lưu thay đổi vào cơ sở dữ liệu
-    await discount.save();
-
-    // Trả về kết quả thành công
-    res.status(200).json({
-      message: 'Mã giảm giá đã được sử dụng thành công',
-      discount: {
-        code: discount.code,
-        amount: discount.amount,
-        type: discount.type,
-        orderId: discount.orderId,
-      }
-    });
-  } catch (error) {
-    // Xử lý lỗi nếu có
-    res.status(500).json({ message: 'Đã có lỗi xảy ra!' });
-  }
-};
-
-
-
 // Xóa mã giảm giá
 const deleteDiscount = async (req, res) => {
   try {

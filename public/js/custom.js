@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch('/settings/fetch-settings'); // Thay '/api/settings' bằng URL thực tế
             const data = await response.json();
-            console.log(data,"data")
             modalMessage = data.modal_text || "Bạn đã đạt giới hạn!"; // Mặc định nếu không có dữ liệu
         } catch (error) {
             console.error("Không thể lấy dữ liệu từ settings:", error);

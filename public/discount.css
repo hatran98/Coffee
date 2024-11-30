@@ -1,0 +1,172 @@
+/* Cấu hình chung */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    color: #495057;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container chính */
+.container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Nội dung chính */
+.main-content {
+    flex: 1;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 8px;
+    margin-left: 20px;
+    box-sizing: border-box;
+}
+
+/* Tiêu đề chính */
+.title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 30px;
+}
+
+/* Tiêu đề danh sách */
+h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Bảng danh sách Giảm giá */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+table th {
+    background-color: #f1f5f9;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+table td {
+    font-size: 16px;
+    color: #495057;
+}
+
+table td a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+table td a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: 30px;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    font-size: 16px;
+}
+
+footer p {
+    margin: 0;
+}
+
+/* Button */
+.submit-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    background-color: rgb(12, 168, 12);
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: green;
+}
+
+/* Quay lại trang chủ */
+.back-home {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #e2e8f0;
+    color: #2d3748;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #cbd5e0;
+}
+
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 95%;
+        padding: 15px;
+    }
+
+    .sidebar {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    table th, table td {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    footer p {
+        font-size: 14px;
+    }
+
+    .submit-button, .back-button {
+        font-size: 16px;
+        padding: 12px;
+    }
+}

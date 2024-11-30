@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Giảm giá</title>
+  <link rel="stylesheet" href="/sidebar.css">
+  <link rel="stylesheet" href="/discount.css">
+</head>
+<body>
+
+  <div class="container">
+    <!-- Sidebar -->
+    <%- include('../sidebar') %> 
+
+    <!-- Nội dung chính -->
+    <div class="main-content">
+      <header>
+        <h1>Quản lý Giảm giá</h1>
+        <nav>
+          <a href="/admin">Trang chủ</a>
+          <a href="/admin/discounts/create">Tạo Giảm giá mới</a>
+        </nav>
+      </header>
+
+      <main>
+        <h2>Danh sách Giảm giá</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tên Giảm giá</th>
+              <th>Loại giảm giá</th>
+              <th>Ngày Bắt đầu</th>
+              <th>Ngày Kết thúc</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% discounts.forEach(discount => { %>
+              <tr>
+                <td><%= discount.code %></td>
+                <td>
+                  <% if (discount.type === 'fixed') { %>
+                    <%= discount.amount %> VND
+                  <% } else if (discount.type === 'percentage') { %>
+                    <%= discount.amount %> %
+                  <% } %>
+                </td>
+                <td><%= new Date(discount.createdAt).toLocaleDateString() %></td>
+                <td><%= new Date(discount.expiresAt).toLocaleDateString() %></td>
+                <td>
+                  <a href="/admin/discounts/edit/<%= discount._id %>">Sửa</a> | 
+                  <a href="/admin/discounts/delete/<%= discount._id %>" onclick="return confirm('Bạn có chắc muốn xóa không?')">Xóa</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+        
+      </main>
+
+    </div> <!-- End main-content -->
+
+  </div> <!-- End container -->
+
+  <footer>
+    <p>&copy; 2024 Quản lý Giảm giá - Tất cả các quyền được bảo lưu</p>
+  </footer>
+
+</body>
+</html>

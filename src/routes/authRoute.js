@@ -4,11 +4,15 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../model/userModel'); // Import model User
-
+const checkAdmin = require('../middlewares/jwtMiddleware')
 // Route hiển thị form đăng nhập
 router.get('/login', (req, res) => {
-  res.render('login', { errorMessage: null });
-});
+    if (req.cookies.auth_token) {
+      return res.redirect('/admin'); 
+    }
+  
+    res.render('login', { errorMessage: null });
+  });
 
 // Route xử lý đăng nhập
 router.post('/login', async (req, res) => {
@@ -46,4 +50,8 @@ router.post('/login', async (req, res) => {
     }
   });
 
+router.get('/logout', async (req,res) => {
+    res.clearCookie('auth_token');
+    res.redirect('/login');
+} )
 module.exports = router;

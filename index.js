@@ -76,5 +76,5 @@ app.use('/', indexRoute);
 app.use('/', apiRoute);
 app.use('/',checkAdmin, adminRoute);  
 app.listen(PORT, () => {
-  console.log(`Server đang chạy tại http://localhost:${PORT}`);
+  console.log(`Server đang chạy tại ${PORT}`);
 });
