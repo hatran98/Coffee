@@ -11,7 +11,7 @@ router.get('/admin/login', (req, res) => {
       return res.redirect('/admin'); 
     }
   
-    res.render('login', { errorMessage: null });
+    res.render('/admin/login', { errorMessage: null });
   });
 
 // Route xử lý đăng nhập
@@ -22,13 +22,13 @@ router.post('/admin/login', async (req, res) => {
       // Kiểm tra xem người dùng có tồn tại không
       const user = await User.findOne({ username });
       if (!user) {
-        return res.render('login', { errorMessage: 'Tài khoản không tồn tại!' });
+        return res.render('/admin/login', { errorMessage: 'Tài khoản không tồn tại!' });
       }
   
       // Kiểm tra mật khẩu
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.render('login', { errorMessage: 'Mật khẩu không đúng!' });
+        return res.render('/admin/login', { errorMessage: 'Mật khẩu không đúng!' });
       }
   
       // Kiểm tra biến JWT_SECRET
@@ -52,6 +52,6 @@ router.post('/admin/login', async (req, res) => {
 
 router.get('/admin/logout', async (req,res) => {
     res.clearCookie('auth_token');
-    res.redirect('/login');
+    res.redirect('/admin/login');
 } )
 module.exports = router;

@@ -18,7 +18,7 @@ const checkAdmin = (req, res, next) => {
     }
   } catch (error) {
     console.error('Token không hợp lệ:', error);
-    return res.redirect('/login'); // Nếu token không hợp lệ, điều hướng về trang login
+    return res.redirect('/admin/login'); // Nếu token không hợp lệ, điều hướng về trang login
   }
 };
 
