@@ -119,6 +119,9 @@ button:hover {
 
 /* Responsive - Chế độ di động */
 @media (max-width: 768px) {
+    .container { 
+        flex-direction: column;
+    }
     .main-content {
         padding: 15px;
     }
