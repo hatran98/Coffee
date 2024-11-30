@@ -57,7 +57,8 @@ const createQuote = async (req, res) => {
       limit, 
       brew_type, 
       weight, 
-      roast_level 
+      roast_level,
+      status
     } = req.body;
 
     // Kiểm tra các trường bắt buộc
@@ -131,7 +132,7 @@ const createQuote = async (req, res) => {
       description: description || '',
       country: country,
       price: price,
-      status: 'active',
+      status: status || 'newlot',
       limit: productLimit,
       brew_type: brew_type,
       weight: weight,
@@ -142,7 +143,10 @@ const createQuote = async (req, res) => {
     await newProduct.save();
 
     // Trả về kết quả thành công
-   res.status(200).redirect('/admin');
+    res.json({
+      success: true,
+      message: 'Sản phẩm đã được tạo thành công!'
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -155,12 +159,11 @@ const createQuote = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    // Lấy các giá trị từ body request
-    const { _id, country, code, name, description, edit_product_type, price, limit, brew_type, weight, roast_level } = req.body;
+    const { _id, country, code, name, description, edit_product_type, price, limit, brew_type, weight, roast_level, status } = req.body;
 
     // Kiểm tra nếu thiếu bất kỳ trường nào quan trọng
     if (!_id || !name || !code || !price || !brew_type || !weight || !roast_level) {
-      return res.status(400).json({ error: 'Các trường bắt buộc không được bỏ trống.' });
+      return res.status(400).json({ success: false, error: 'Các trường bắt buộc không được bỏ trống.' });
     }
 
     // Tạo object cập nhật các trường
@@ -174,26 +177,28 @@ const updateProduct = async (req, res) => {
       limit,
       brew_type,
       weight,
-      roast_level,  
+      roast_level,
+      status
     };
 
-    const updatedProduct = await Product.findByIdAndUpdate(_id, updates, {
-      new: true, 
-      runValidators: true, 
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(_id, updates, { new: true, runValidators: true });
 
     if (!updatedProduct) {
-      return res.status(404).json({ error: 'Không tìm thấy sản phẩm.' });
+      return res.status(404).json({ success: false, error: 'Không tìm thấy sản phẩm.' });
     }
 
-    res.status(200).redirect('/admin');
+   res.redirect('/admin');
+
   } catch (error) {
     return res.status(500).json({
+      success: false,
       error: 'Lỗi hệ thống',
       details: error.message,
     });
   }
 };
+
+
 
 const getProducts = async (req, res) => {
   try {
@@ -230,9 +235,39 @@ const getProducts = async (req, res) => {
   }
 };
 
+const deleteProduct = async (req, res) => {
+  try {
+    const { productId } = req.params; 
+    
+    // Kiểm tra ID sản phẩm hợp lệ
+    if (!productId) {
+      return res.status(400).json({ message: 'ID sản phẩm không hợp lệ!' });
+    }
+
+    // Tìm và xóa sản phẩm theo ID
+    const product = await Product.findByIdAndDelete(productId);
+
+    // Nếu không tìm thấy sản phẩm
+    if (!product) {
+      return res.status(404).json({ message: 'Sản phẩm không tồn tại!' });
+    }
+
+    // Trả về phản hồi thành công
+    return res.status(200).json({
+      success: true,
+      message: 'Sản phẩm đã được xóa thành công.',
+    });
+  } catch (error) {
+    console.error(error);
+    // Trả về phản hồi lỗi khi có ngoại lệ
+    return res.status(500).json({ message: 'Lỗi khi xóa sản phẩm' });
+  }
+};
 
 
 
 
 
-module.exports = { createQuote, getCountries , updateProductLimit , updateProduct , getProducts };
+
+
+module.exports = { createQuote, getCountries , updateProductLimit , updateProduct , getProducts , deleteProduct  };

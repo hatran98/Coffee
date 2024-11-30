@@ -1,0 +1,165 @@
+/* settings.css */
+
+/* Thiết lập chung cho body */
+body {
+    font-family: Arial, sans-serif;
+}
+
+/* Thiết lập chung cho container */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Nội dung chính */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f4f4f4; /* Màu nền giống phần admin */
+    box-sizing: border-box;
+}
+
+/* Tiêu đề của Settings */
+.main-content h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Style cho các tab */
+.tab {
+    display: inline-block;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.tab.active {
+    background-color: #4CAF50;
+    color: white;
+    border-bottom: none;
+}
+
+/* Nội dung các tab */
+.tab-content {
+    display: none;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Form cài đặt */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Các trường nhập liệu trong form */
+form div {
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+input[type="text"],
+textarea,
+select,
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Định dạng cho textarea */
+textarea {
+    height: 100px;
+}
+
+/* Màu nền cho nút */
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    align-self: flex-start;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Màu nền cho input khi focus */
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Màu nền cho dòng khi di chuột vào các ô nhập liệu */
+input:hover,
+textarea:hover,
+select:hover {
+    border-color: #4CAF50;
+}
+
+/* Các trường nhập liệu đã hoàn thành */
+input[disabled] {
+    background-color: #f9f9f9;
+}
+
+/* Responsive - Chế độ di động */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 15px;
+        height: auto;
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    form div {
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-size: 14px;
+    }
+
+    input[type="text"],
+    textarea,
+    select,
+    input[type="password"] {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}

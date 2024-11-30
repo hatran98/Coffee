@@ -235,6 +235,39 @@ body {
     z-index: 1;
 }
 
+/* Style cho nút Áp dụng */
+.apply-button {
+    margin-top:10px;
+    background-color: #4CAF50; /* Màu nền xanh lá */
+    color: white; /* Màu chữ trắng */
+    padding: 10px 20px; /* Khoảng cách padding */
+    border: none; /* Bỏ border mặc định */
+    border-radius: 5px; /* Làm bo tròn góc nút */
+    font-size: 16px; /* Kích thước chữ */
+    font-weight: bold; /* Đậm chữ */
+    cursor: pointer; /* Thêm biểu tượng con trỏ khi hover */
+    transition: all 0.3s ease; /* Thêm hiệu ứng chuyển đổi mượt mà */
+}
+
+/* Hiệu ứng hover */
+.apply-button:hover {
+    background-color: #45a049; /* Màu nền khi hover */
+    transform: scale(1.05); /* Phóng to nút một chút khi hover */
+}
+
+/* Hiệu ứng focus */
+.apply-button:focus {
+    outline: none; /* Bỏ viền khi focus */
+    box-shadow: 0 0 5px rgba(72, 202, 128, 0.8); /* Thêm bóng mờ quanh nút khi focus */
+}
+
+/* Hiệu ứng khi nút bị khoá */
+.apply-button:disabled {
+    background-color: #d3d3d3; /* Màu xám khi nút bị khoá */
+    cursor: not-allowed; /* Thay đổi con trỏ khi hover */
+}
+
+
 /* Responsive cho màn hình nhỏ */
 @media (max-width: 768px) {
     /* Điều chỉnh container để vừa với màn hình nhỏ */

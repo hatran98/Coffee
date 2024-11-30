@@ -47,7 +47,29 @@
                                 <tr>
                                     <td><%= product.product_code %></td>
                                     <td>
-                                        <p class="product-name"><%= product.product_name %></p>
+                                        <div class="product-item">
+                                            <h4 class="product-name">
+                                                <%= product.product_name %>
+                                                <span 
+                                                    class="product-status <%= product.status === 'newlot' ? 'blinking-text newlot' : 
+                                                                           product.status === 'promotion' ? 'blinking-text promotion' :
+                                                                           product.status === 'active' ? 'blinking-text active' :
+                                                                           product.status === 'available' ? 'blinking-text available' :
+                                                                           'default' %>">
+                                                    <% if (product.status === 'newlot') { %>
+                                                        New
+                                                    <% } else if (product.status === 'promotion') { %>
+                                                        Promotion
+                                                    <% } else if (product.status === 'active') { %>
+                                                        Active
+                                                    <% } else if (product.status === 'available') { %>
+                                                        Available
+                                                    <% } else { %>
+                                                        <%= product.status %>
+                                                    <% } %>
+                                                </span>
+                                            </h4>
+                                        </div>
                                         <p class="product-description"><%= product.description %></p>
                                     </td>
                                     <td><%= product.product_type %></td>
@@ -84,16 +106,45 @@
                     <% group.products.forEach(product => { %>
                         <div class="cart-item">
                             <div class="item-details">
-                                <h4 class="product-name"><%= product.product_name %></h4>
-                                <p class="product-description"><%= product.description %></p>
-                                <p class="product-price">Giá: <%= product.price %> VND</p>
-                                <p class="product-limit">Giới hạn: <%= product.limit %></p>
-                                <div class="number-input-container">
-                                    <button class="decrement">-</button>
-                                    <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
-                                    <button class="increment">+</button>
+                                <div class="product-item">
+                                    <h4 class="product-name">
+                                        <%= product.product_name %>
+                                        <span 
+                                            class="product-status <%= product.status === 'newlot' ? 'blinking-text newlot' : 
+                                                                   product.status === 'promotion' ? 'blinking-text promotion' :
+                                                                   product.status === 'active' ? 'blinking-text active' :
+                                                                   product.status === 'available' ? 'blinking-text available' :
+                                                                   'default' %>">
+                                            <% if (product.status === 'newlot') { %>
+                                                New
+                                            <% } else if (product.status === 'promotion') { %>
+                                                Promotion
+                                            <% } else if (product.status === 'active') { %>
+                                                Active
+                                            <% } else if (product.status === 'available') { %>
+                                                Available
+                                            <% } else { %>
+                                                <%= product.status %>
+                                            <% } %>
+                                        </span>
+                                    </h4>
+        
+                                    <p class="product-description"><%= product.description %></p>
+                                    <p class="product-price">Giá: <%= product.price %> VND</p>
+                                    <p class="product-limit">Giới hạn: <%= product.limit %></p>
+                                    <p class="product-weight">Cân nặng: <%= product.weight %></p>
+                                    <p class="product-roast-level">Cấp độ rang: <%= product.roast_level %></p>
+                                    <p class="product-brew-type">Loại pha: <%= product.brew_type %></p>
+                                    <p class="product-type">Loại sản phẩm: <%= product.product_type %></p> 
+                                    <p class="product-code">Mã: <%= product.product_code %></p>
+                                    
+                                    <div class="number-input-container">
+                                        <button class="decrement">-</button>
+                                        <input type="number" class="number-input" value="0" min="0" max="<%= product.limit %>" readonly data-product-code="<%= product.product_code %>" />
+                                        <button class="increment">+</button>
+                                    </div>
                                 </div>
-                              </div>
+                            </div>
                         </div>
                     <% }); %>
                 </div>
@@ -103,6 +154,7 @@
                 <button class="order-button">Đặt hàng</button>
             </div>
         </div>
+        
     </div>
 
     <!-- JavaScript -->

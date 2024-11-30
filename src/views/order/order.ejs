@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link href="/order.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
 
     <div class="container">
@@ -15,7 +17,7 @@
         <!-- Thông tin đơn hàng -->
         <div class="order-info">
             <h2 class="section-title">Thông tin đơn hàng</h2>
-        
+
             <!-- Hiển thị các sản phẩm trong đơn hàng -->
             <table class="product-table">
                 <thead>
@@ -31,7 +33,7 @@
                     <!-- Các sản phẩm sẽ được thêm vào đây bằng JavaScript -->
                 </tbody>
             </table>
-        
+
             <!-- Hiển thị tổng số tiền phải thanh toán -->
             <div class="total-amount">
                 <p><strong>Tổng thành tiền:</strong> <span id="totalAmount">0.00</span> VND</p>
@@ -41,17 +43,11 @@
         <!-- Form nhập thông tin khách hàng và phương thức thanh toán -->
         <h2 class="section-title">Thông tin khách hàng</h2>
         <form id="orderForm" action="/order/submit" method="POST" class="order-form">
-            
+
             <!-- Tên đầy đủ -->
             <div class="form-group">
                 <label for="fullName" class="form-label">Tên đầy đủ:</label>
                 <input type="text" id="fullName" name="fullName" class="form-input" required>
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email" class="form-label">Email:</label>
-                <input type="email" id="email" name="email" class="form-input" required>
             </div>
 
             <!-- Số điện thoại -->
@@ -67,7 +63,7 @@
             </div>
 
             <h3 class="payment-method-title">Phương thức thanh toán</h3>
-            
+
             <!-- Phương thức thanh toán -->
             <div class="payment-method">
                 <!-- Thanh toán qua SePay sẽ được chọn mặc định -->
@@ -75,7 +71,7 @@
                     <input type="radio" name="paymentMethod" value="sepay" required checked>
                     Thanh toán qua SePay
                 </label>
-                
+
                 <!-- Tạm thời comment lại phương thức thanh toán COD -->
                 <!--
                 <label class="payment-option">
@@ -102,7 +98,7 @@
             <button onclick="closeModal('codModal')" class="modal-close">Đóng</button>
         </div>
     </div>
-    
+
     <div id="modalOverlay" class="modal-overlay"></div>
 
     <!-- Modal -->
@@ -115,15 +111,15 @@
                 Nếu đã thanh toán rồi, <a href="javascript:void(0);" onclick="checkPaymentStatus()">ấn vào đây</a>
             </p>
         </div>
-       
+
     </div>
-</div>
-    
+    </div>
+
     <!-- Overlay nền tối -->
     <div id="overlay" class="overlay"></div>
 
     <script>
-        
+
         // Hàm mở modal
         function openModal(modalId) {
             document.getElementById(modalId).style.display = "block";  // Hiển thị modal
@@ -165,165 +161,191 @@
 
         // Xử lý submit form và hiển thị modal
         async function processPayment(orderData) {
-    try {
-        const response = await fetch('/sepay/process-sepay-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
+            try {
+                const response = await fetch('/sepay/process-sepay-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Nếu thanh toán thành công, trả về URL mã QR
+                    return data.qrCodeUrl;
+                } else {
+                    alert('Thanh toán không thành công: ' + data.message);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Có lỗi xảy ra khi thanh toán:', error);
+                alert('Có lỗi xảy ra khi thanh toán');
+                return null;
+            }
+        }
+
+        // Sử dụng hàm này trong sự kiện submit của form
+        document.getElementById('orderForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Ngăn hành vi mặc định của form
+
+            // Lấy thông tin đơn hàng từ form
+            const fullName = document.getElementById('fullName').value;
+            const phone = document.getElementById('phone').value;
+            const discountCode = document.getElementById('discountCode').value || null;
+            const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+
+            // Tạo object dữ liệu cho đơn hàng
+            const orderData = {
+                customer: {
+                    fullName: fullName,
+                    phone: phone
+                },
+                discountCode: discountCode,
+                amount: totalAmount,
+                products: JSON.parse(localStorage.getItem('orderDetails') || '[]') // Lấy thông tin sản phẩm từ localStorage
+            };
+
+            try {
+                // Gọi API để lấy tài khoản ngân hàng
+                const bankAccountResponse = await fetch('/settings/fetch-settings', {
+                    method: 'GET', // Giả sử API là GET
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const bankAccountData = await bankAccountResponse.json();
+
+                if (bankAccountData && bankAccountData.bank_account_number && bankAccountData.bank_name) {
+                    const bankAccount = bankAccountData.bank_account_number;
+                    const bankName = bankAccountData.bank_name;
+
+                    const createOrderResponse = await fetch('/orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    const createOrderResult = await createOrderResponse.json();
+                    const orderId = createOrderResult.order._id;
+                    const paymentData = {
+                        account: bankAccount,
+                        bank: bankName,
+                        amount: totalAmount,
+                        description: `Thanh toán đơn hàng ${orderId}${discountCode ? ' - Mã giảm giá: ' + discountCode : ''}` // Kiểm tra nếu có discountCode thì thêm vào
+                    };
+
+                    if (orderId) {
+                        localStorage.setItem('orderId', orderId);
+                    }
+                    const qrCodeUrl = await processPayment(paymentData);
+
+                    if (qrCodeUrl) {
+                        document.getElementById('sepayQrCode').src = qrCodeUrl;
+                        openModal('sepayModal');
+                    } else {
+                        console.error("No QR Code URL received");
+                    }
+                } else {
+                    console.error("Không thể lấy tài khoản ngân hàng từ settings.");
+                    alert("Lỗi khi lấy thông tin tài khoản ngân hàng.");
+                }
+            } catch (error) {
+                console.error("Lỗi khi xử lý đơn hàng hoặc thanh toán:", error);
+                alert("Đã có lỗi xảy ra. Vui lòng thử lại sau.");
+            }
         });
 
-        const data = await response.json();
+        document.getElementById('applyDiscount').addEventListener('click', function () {
+            const discountCode = document.getElementById('discountCode').value;
 
-        if (data.success) {
-            // Nếu thanh toán thành công, trả về URL mã QR
-            return data.qrCodeUrl;
-        } else {
-            alert('Thanh toán không thành công: ' + data.message);
-            return null;
-        }
-    } catch (error) {
-        console.error('Có lỗi xảy ra khi thanh toán:', error);
-        alert('Có lỗi xảy ra khi thanh toán');
-        return null;
-    }
-}
-
-// Sử dụng hàm này trong sự kiện submit của form
-document.getElementById('orderForm').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Ngăn hành vi mặc định của form
-
-    // Lấy thông tin đơn hàng từ form
-    const fullName = document.getElementById('fullName').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const discountCode = document.getElementById('discountCode').value || null;
-    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
-
-    // Tạo object dữ liệu cho đơn hàng
-    const orderData = {
-        customer: {
-            fullName: fullName,
-            email: email,
-            phone: phone
-        },
-        discountCode: discountCode,
-        amount: totalAmount,
-        products: JSON.parse(localStorage.getItem('orderDetails') || '[]') // Lấy thông tin sản phẩm từ localStorage
-    };
-
-    try {
-        // Gọi API để tạo đơn hàng
-        const createOrderResponse = await fetch('/orders', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(orderData)
-        });
-
-        const createOrderResult = await createOrderResponse.json();
-        const orderId = createOrderResult.order._id; 
-        if (orderId) {
-            localStorage.setItem('orderId', orderId);
-        }
-        const paymentData = {
-            account:"101499100004005247",
-            bank: "KienLongBank",
-            amount: totalAmount,
-            description: `Thanh toán đơn hàng ${orderId}`
-        };
-
-        const qrCodeUrl = await processPayment(paymentData);
-
-        if (qrCodeUrl) {
-            document.getElementById('sepayQrCode').src = qrCodeUrl;
-            openModal('sepayModal');
-        } else {
-            console.error("No QR Code URL received");
-        }
-    } catch (error) {
-        console.error("Lỗi khi xử lý đơn hàng hoặc thanh toán:", error);
-        alert("Đã có lỗi xảy ra. Vui lòng thử lại sau.");
-    }
-});
-        document.getElementById('applyDiscount').addEventListener('click', function() {
-            const discountCode = document.getElementById('discountCode').value; // Lấy mã giảm giá từ input
-
-            // Kiểm tra nếu người dùng chưa nhập mã giảm giá
             if (!discountCode) {
                 alert('Vui lòng nhập mã giảm giá!');
                 return;
             }
 
-            // Gửi mã giảm giá đến BE để xác thực
-            fetch('/check-discount', {  // Đổi URL này thành URL endpoint của backend của bạn
+            fetch('/settings/check-discount', {  // Đổi URL này thành URL endpoint của backend của bạn
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ discountCode: discountCode })
+                body: JSON.stringify({ code: discountCode })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.valid) {
-                    // Mã giảm giá hợp lệ, tính toán lại tổng tiền
-                    const discountAmount = data.discountAmount;
-                    const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
-                    const newTotal = totalAmount - discountAmount;
+                .then(response => response.json())
+                .then(data => {
+                    if (data.discount) {
+                        const discountAmount = data.discount.amount;
+                        const totalAmount = parseFloat(document.getElementById('totalAmount').innerText);
+                        const discountType = data.discount.type;  // Kiểu giảm giá (fixed hay percentage)
 
-                    // Cập nhật lại tổng tiền sau khi giảm giá
-                    document.getElementById('totalAmount').innerText = newTotal.toFixed(2);
-                    alert('Mã giảm giá đã được áp dụng!');
-                } else {
-                    alert('Mã giảm giá không hợp lệ!');
-                }
-            })
-            .catch(error => {
-                console.error('Có lỗi xảy ra:', error);
-                alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
-            });
+                        let newTotal;
+
+                        if (discountType === 'fixed') {
+                            // Trừ số tiền cố định
+                            newTotal = totalAmount - discountAmount;
+                        } else if (discountType === 'percentage') {
+                            // Trừ theo phần trăm
+                            newTotal = totalAmount - (totalAmount * (discountAmount / 100));  // discountAmount là tỷ lệ phần trăm
+                        }
+
+                        // Cập nhật lại tổng tiền sau khi giảm giá
+                        document.getElementById('totalAmount').innerText = newTotal.toFixed(2);
+                        alert('Mã giảm giá đã được áp dụng!');
+
+                        // Khoá ô nhập và nút áp dụng sau khi thành công
+                        document.getElementById('discountCode').disabled = true;
+                        document.getElementById('applyDiscount').disabled = true;
+                    } else {
+                        alert('Mã giảm giá không hợp lệ!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Có lỗi xảy ra:', error);
+                    alert('Đã có lỗi xảy ra khi xác thực mã giảm giá');
+                });
         });
 
         function openModal(modalId) {
-    document.getElementById(modalId).style.display = 'block';
-    document.getElementById('modalOverlay').style.display = 'block';
-}
+            document.getElementById(modalId).style.display = 'block';
+            document.getElementById('modalOverlay').style.display = 'block';
+        }
 
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = 'none';
-    document.getElementById('modalOverlay').style.display = 'none';
-}
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
 
-async function checkPaymentStatus() {
-    try {
-        // Lấy ID đơn hàng từ URL hoặc localStorage (tuỳ theo cách bạn lưu trữ)
-        const orderId = localStorage.getItem('orderId');
+        async function checkPaymentStatus() {
+            try {
+                const orderId = localStorage.getItem('orderId');
 
-        // Gọi API để kiểm tra trạng thái thanh toán
-        const response = await fetch(`/sepay/check-payment/${orderId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+                const response = await fetch(`/sepay/check-payment/${orderId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
 
-        const data = await response.json();
+                const data = await response.json();
 
-        if (data.success === true) {
-    alert('Thanh toán thành công!');
-    localStorage.removeItem('orderId');
-    localStorage.removeItem('orderDetails');
-    window.location.href = '/'
-} else {
-   confirm("Đơn hàng chưa thanh toán , vui lòng kiểm tra lại")
-}
-    } catch (error) {
-        console.error('Lỗi khi gọi API:', error);
-        alert('Đã có lỗi xảy ra khi kiểm tra trạng thái thanh toán.');
-    }
-}
-</script>
+                if (data.success === true) {
+                    alert('Thanh toán thành công!');
+                    localStorage.removeItem('orderId');
+                    localStorage.removeItem('orderDetails');
+                    window.location.href = '/'
+                } else {
+                    confirm("Đơn hàng chưa thanh toán , vui lòng kiểm tra lại")
+                }
+            } catch (error) {
+                console.error('Lỗi khi gọi API:', error);
+                alert('Đã có lỗi xảy ra khi kiểm tra trạng thái thanh toán.');
+            }
+        }
+    </script>
 </body>
+
 </html>

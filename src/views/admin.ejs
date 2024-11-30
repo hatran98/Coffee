@@ -28,7 +28,7 @@
         <h1>Quản Lý Sản Phẩm</h1>
 
         <!-- Form tạo Báo Giá mới -->
-        <form action="/admin/create-quote" method="POST">
+        <form id="create-product-form" action="/admin/create-quote" method="POST">
           <h2>Tạo Sản Phẩm Mới</h2>
 
           <!-- Quốc Gia -->
@@ -102,6 +102,13 @@
             placeholder="Nhập giới hạn"
             value="1"
           />
+          <label for="status">Trạng Thái:</label>
+          <select name="status" id="status" required>
+            <option value="available">Available</option>
+            <option value="promotion">Promotion</option>
+            <option value="newlot">New lot</option>
+            <option value="active">Active</option>
+          </select>
           <!-- Mặc định là 2 -->
 
           <button type="submit">Tạo Sản Phẩm</button>
@@ -140,7 +147,19 @@
               <td><%= product.description %></td>
               <td><%= product.price %></td>
               <td><%= product.limit %></td>
-              <td><%= product.status === 'active' ? '✔️' : '❌' %></td>
+              <td>
+                <% if (product.status === 'newlot') { %>
+                  <span class="blinking-text">New</span>
+                <% } else if (product.status === 'promotion') { %>
+                  <span class="blinking-text">Promotion</span>
+                <% } else if (product.status === 'active') { %>
+                  <span class="blinking-text">Active</span>
+                <% } else if (product.status === 'available') { %>
+                  <span class="blinking-text">Available</span>
+                <% } else { %>
+                  <span><%= product.status %></span>
+                <% } %>
+              </td>
               <td>
                 <!-- Nút Edit -->
                 <button
@@ -157,12 +176,13 @@
                   data-brew_type="<%= product.brew_type %>"
                   data-weight="<%= product.weight %>"
                   data-roast_level="<%= product.roast_level %>"
+                  data-status="<%= product.status %>"
                 >
                   <i class="fa fa-edit" aria-hidden="true"></i> Sửa
                 </button>
 
                 <!-- Nút Delete -->
-                <button class="delete-btn">
+                <button class="delete-btn" data-id="<%= product._id %>">
                   <i class="fa fa-trash" aria-hidden="true"></i> Xóa
                 </button>
               </td>
@@ -272,6 +292,14 @@
             value="1"
           />
 
+          <label for="edit-status">Trạng Thái:</label>
+          <select name="status" id="edit-status" required>
+            <option value="available">Available</option>
+            <option value="promotion">Promotion</option>
+            <option value="newlot">New lot</option>
+            <option value="active">Active</option>
+          </select>
+
           <button type="submit">Lưu Thay Đổi</button>
         </form>
       </div>
@@ -279,37 +307,186 @@
 
     <script>
       $(document).ready(function () {
-        $(".edit-btn").click(function () {
-          var id = $(this).data("id");
-          var country = $(this).data("country");
-          var name = $(this).data("name");
-          var code = $(this).data("code");
-          var product_type = $(this).data("product_type");
-          var price = $(this).data("price");
-          var description = $(this).data("description");
-          var limit = $(this).data("limit");
-          var brew_type = $(this).data("brew_type");
-          var weight = $(this).data("weight");
-          var roast_level = $(this).data("roast_level");
-
-          $("#edit-id").val(id);
-          $("#edit-country").val(country).trigger("change");
-          $("#edit-code").val(code);
-          $("#edit-name").val(name);
-          $("#edit-product_type").val(product_type);
-          $("#edit-price").val(price);
-          $("#edit-description").val(description);
-          $("#edit-limit").val(limit);
-          $("#edit-brew_type").val(brew_type);
-          $("#edit-weight").val(weight);
-          $("#edit-roast_level").val(roast_level);
-
-          $("#editPopup").show();
-        });
-
-        $("#country").select2();
-        $("#edit-country").select2();
+        $('.close-btn').on('click', function() {
+    // Ẩn modal bằng cách thay đổi display của nó
+    $('#editPopup').hide();
+  });
+          // Sự kiện khi nhấn nút Edit
+          $(".edit-btn").click(function () {
+              var id = $(this).data("id");
+              var country = $(this).data("country");
+              var name = $(this).data("name");
+              var code = $(this).data("code");
+              var product_type = $(this).data("product_type");
+              var price = $(this).data("price");
+              var description = $(this).data("description");
+              var limit = $(this).data("limit");
+              var brew_type = $(this).data("brew_type");
+              var weight = $(this).data("weight");
+              var roast_level = $(this).data("roast_level");
+              var status = $(this).data("status");
+  
+              // Gán giá trị vào các input tương ứng trong form chỉnh sửa
+              $("#edit-id").val(id);
+              $("#edit-country").val(country).trigger("change");
+              $("#edit-code").val(code);
+              $("#edit-name").val(name);
+              $("#edit-product_type").val(product_type);
+              $("#edit-price").val(price);
+              $("#edit-description").val(description);
+              $("#edit-limit").val(limit);
+              $("#edit-brew_type").val(brew_type);
+              $("#edit-weight").val(weight);
+              $("#edit-roast_level").val(roast_level);
+              $("#edit-status").val(status);
+  
+              // Hiển thị popup chỉnh sửa
+              $("#editPopup").show();
+          });
+  
+          // Khởi tạo select2 cho các trường quốc gia
+          $("#country").select2();
+          $("#edit-country").select2();
       });
-    </script>
+  
+      $(document).on('click', '.delete-btn', function () {
+  var productId = $(this).data('id');
+  
+  // Xác nhận xóa bằng SweetAlert
+  Swal.fire({
+    title: 'Bạn có chắc chắn muốn xóa sản phẩm này?',
+    text: "Bạn sẽ không thể khôi phục lại sản phẩm này!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Xóa!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: '/products/delete-product/' + productId, 
+        type: 'DELETE', 
+        success: function(response) {
+  if (response.success) {
+    Swal.fire({
+      title: 'Đã xóa!',
+      text: response.message,
+      icon: 'success',
+      confirmButtonText: 'OK'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        location.reload();  
+      }
+    });
+  } else {
+    Swal.fire(
+      'Lỗi!',
+      response.message,  
+      'error'
+    );
+  }
+},
+        error: function(xhr, status, error) {
+          // Nếu có lỗi xảy ra trong quá trình gọi API
+          Swal.fire(
+            'Lỗi!',
+            'Có lỗi xảy ra khi xóa sản phẩm. Xin vui lòng thử lại.',
+            'error'
+          );
+        }
+      });
+    }
+  });
+});
+
+$(document).ready(function() {
+    $('#create-product-form').submit(function(event) {
+      event.preventDefault(); // Ngăn không cho form gửi lại thông qua trang
+
+      var formData = $(this).serialize(); // Lấy dữ liệu từ form
+
+      // Gửi dữ liệu qua Ajax
+      $.ajax({
+        type: 'POST',
+        url: '/admin/create-quote',
+        data: formData,
+        success: function(response) {
+          // Nếu thành công, hiển thị SweetAlert2
+          if (response.success) {
+            Swal.fire({
+              title: 'Thành công!',
+              text: response.message, // Lấy thông báo thành công từ backend
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Bạn có thể thêm hành động khi người dùng nhấn OK, ví dụ tải lại trang hoặc điều hướng đến trang khác
+                window.location.href = '/admin'; // Điều hướng tới trang danh sách đơn hàng
+              }
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          // Xử lý lỗi nếu có
+          Swal.fire({
+            title: 'Lỗi!',
+            text: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      });
+    });
+  });
+  
+  $(document).ready(function () {
+  $('#edit-product-form').submit(function(event) {
+    event.preventDefault(); // Ngăn không cho form gửi lại thông qua trang
+    console.log("Form submitted");
+
+    var formData = $(this).serialize(); // Lấy dữ liệu từ form
+
+    $.ajax({
+      type: 'POST',
+      url: '/admin/edit-product',
+      data: formData,
+      success: function(response) {
+          // Nếu thành công, hiển thị SweetAlert2
+          if (response.success) {
+            Swal.fire({
+              title: 'Thành công!',
+              text: response.message, // Lấy thông báo thành công từ backend
+              icon: 'success',
+              confirmButtonText: 'OK'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = '/admin'; 
+              }
+            });
+          }
+        else {
+          Swal.fire({
+            title: 'Lỗi!',
+            text: response.error || 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      },
+      error: function(xhr, status, error) {
+        Swal.fire({
+          title: 'Lỗi!',
+          text: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    });
+  });
+});
+
+  
+  </script>
+  
   </body>
 </html>

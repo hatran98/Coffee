@@ -31,10 +31,105 @@
           </tr>
         </thead>
         <tbody>
-          <!-- Dữ liệu đơn hàng sẽ được hiển thị ở đây -->
+          <% orders.forEach((order, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= order._id %></td>
+              <td><%= order.customer_name ? order.customer_name : 'N/A' %></td>
+              <td><%= order.created_at ? order.created_at.toISOString().split('T')[0] : 'N/A' %></td>
+              <td><%= order.total_price ? order.total_price : 'N/A' %></td>
+              <td><%= order.payment_status %></td>
+              <td>
+                <!-- Liên kết tới modal xem chi tiết -->
+                <button class="view-order-btn" data-order-id="<%= order._id %>">Xem</button>
+              </td>
+            </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>
   </div>
+
+  <!-- Modal hiển thị chi tiết đơn hàng -->
+  <div id="orderModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>Chi tiết đơn hàng</h2>
+      <div id="orderDetails">
+        <!-- Chi tiết đơn hàng sẽ được hiển thị ở đây -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mở modal khi nhấn "Xem"
+    document.querySelectorAll('.view-order-btn').forEach(button => {
+  button.addEventListener('click', async function() {
+    const orderId = this.getAttribute('data-order-id');
+    
+    // Gửi yêu cầu Ajax để lấy chi tiết đơn hàng
+    try {
+      const response = await fetch(`/admin/order/${orderId}`);
+      const orderData = await response.json();
+      
+      // Hiển thị chi tiết đơn hàng trong modal
+      const orderDetails = document.getElementById('orderDetails');
+      
+      // Hiển thị thông tin chung của đơn hàng
+      let orderHtml = `
+        <p><strong>Mã đơn hàng:</strong> ${orderData._id}</p>
+        <p><strong>Khách hàng:</strong> ${orderData.customer_name}</p>
+        <p><strong>Ngày tạo:</strong> ${new Date(orderData.created_at).toLocaleDateString()}</p>
+        <p><strong>Tổng tiền:</strong> ${orderData.total_price}</p>
+        <p><strong>Trạng thái thanh toán:</strong> ${orderData.payment_status}</p>
+        <p><strong>Phương thức thanh toán:</strong> ${orderData.payment_method}</p>
+      `;
+      
+      // Hiển thị danh sách sản phẩm
+      if (orderData.products && orderData.products.length > 0) {
+        orderHtml += `<h3>Danh sách sản phẩm:</h3><ul>`;
+        orderData.products.forEach(product => {
+          orderHtml += `
+            <li>
+              <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
+              <p><strong>Tên sản phẩm:</strong> ${product.product_name}</p>
+              <p><strong>Miêu tả:</strong> ${product.product_description}</p>
+              <p><strong>Loại sản phẩm:</strong> ${product.product_type}</p>
+              <p><strong>Phương pháp pha chế:</strong> ${product.brew_type}</p>
+              <p><strong>Cân nặng:</strong> ${product.weight}</p>
+              <p><strong>Cấp độ rang:</strong> ${product.roast_level}</p>
+              <p><strong>Số lượng:</strong> ${product.quantity}</p>
+              <p><strong>Giá:</strong> ${product.price}</p>
+            </li>
+          `;
+        });
+        orderHtml += `</ul>`;
+      } else {
+        orderHtml += `<p>Không có sản phẩm trong đơn hàng này.</p>`;
+      }
+
+      // Cập nhật nội dung vào modal
+      orderDetails.innerHTML = orderHtml;
+      
+      // Hiển thị modal
+      document.getElementById('orderModal').style.display = 'block';
+    } catch (error) {
+      console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
+    }
+  });
+});
+
+// Đóng modal khi nhấn vào nút đóng
+document.querySelector('.close-btn').addEventListener('click', function() {
+  document.getElementById('orderModal').style.display = 'none';
+});
+
+// Đóng modal nếu nhấn ngoài vùng modal
+window.addEventListener('click', function(event) {
+  if (event.target === document.getElementById('orderModal')) {
+    document.getElementById('orderModal').style.display = 'none';
+  }
+});
+  </script>
 </body>
 </html>

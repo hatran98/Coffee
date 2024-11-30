@@ -106,6 +106,14 @@ h1 {
 .coffee-table td {
     font-size: 14px;
 }
+.coffee-table tbody tr {
+    border-bottom: 3px solid #333; /* Tăng độ đậm và đổi màu đường viền */
+}
+
+/* Nếu không muốn có đường viền dưới cho hàng cuối */
+.coffee-table tbody tr:last-child {
+    border-bottom: none; /* Bỏ đường viền cuối cùng */
+}
 
 .desktop-view .order-button {
     position: fixed;         /* Giữ cố định trên màn hình */
@@ -187,6 +195,48 @@ input[type="number"] {
     -moz-appearance: textfield; 
 }
 
+/* Phần status */
+.product-status {
+    font-size: 12px; 
+    padding: 5px 10px; 
+    border-radius: 15px; 
+    font-weight: bold; 
+    display: inline-block;
+    margin-left: 10px; 
+    text-transform: uppercase;
+}
+
+/* Hiệu ứng nhấp nháy */
+.blinking-text {
+    animation: blink 1.2s infinite ease-in-out;
+}
+
+/* Hiệu ứng nhấp nháy */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Màu sắc cho từng trạng thái */
+.product-status.newlot {
+    color: #ffffff; 
+    background-color: #4caf50; /* Xanh lá cây */
+}
+
+.product-status.promotion {
+    color: #ffffff; 
+    background-color: #ff9800; /* Cam */
+}
+
+.product-status.active {
+    color: #ffffff; 
+    background-color: #2196f3; /* Xanh dương */
+}
+
+.product-status.available {
+    color: #ffffff; 
+    background-color: #9c27b0; /* Tím */
+}
 
 
 /* Cho màn hình nhỏ (mobile) */

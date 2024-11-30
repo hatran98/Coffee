@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài đặt</title>
+    <link rel="stylesheet" href="/sidebar.css">
+    <link rel="stylesheet" href="/settings.css">
+    <script src="/js/scripts.js" defer></script>
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <%- include('../sidebar') %>
+
+            <!-- Nội dung chính -->
+            <div class="main-content">
+                <h1>Cài đặt hệ thống</h1>
+
+                <!-- Tab Navigation -->
+                <div class="tabs">
+                    <div class="tab active" id="settings-tab">Cài đặt</div>
+                    <div class="tab" id="password-tab">Đổi mật khẩu</div>
+                    <div class="tab" id="discount-tab">Giảm giá</div> <!-- Thêm tab giảm giá -->
+                </div>
+
+                <!-- Nội dung Tab Cài đặt -->
+                <div class="tab-content active" id="settings-content">
+                    <form id="settings-form" method="POST">
+                        <div>
+                            <label for="bank_name">Tên ngân hàng:</label>
+                            <input type="text" name="bank_name" id="bank_name" value="<%= settings.bank_name %>"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="bank_account_number">Số tài khoản ngân hàng:</label>
+                            <input type="text" name="bank_account_number" id="bank_account_number"
+                                value="<%= settings.bank_account_number %>" required>
+                        </div>
+
+                        <div>
+                            <label for="modal_text">Văn bản hiển thị:</label>
+                            <textarea name="modal_text" id="modal_text" required><%= settings.modal_text %></textarea>
+                        </div>
+
+                        <div>
+                            <label for="admin_account">Tài khoản Admin:</label>
+                            <select name="admin_account_id" id="admin_account">
+                                <option value="<%= user._id %>"
+                                    <%=user._id.toString()===settings.admin_account_id.toString() ? 'selected' : '' %>>
+                                    <%= user.username %>
+                                </option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <button type="submit">Lưu Cài Đặt</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Nội dung Tab Đổi mật khẩu -->
+                <div class="tab-content" id="password-content">
+                    <h2>Đổi mật khẩu</h2>
+                    <form id="password-form" action="/settings/change-password" method="POST">
+                        <div>
+                            <label for="old_password">Mật khẩu cũ:</label>
+                            <input type="password" name="old_password" id="old_password" placeholder="Nhập mật khẩu cũ"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="new_password">Mật khẩu mới:</label>
+                            <input type="password" name="new_password" id="new_password" placeholder="Nhập mật khẩu mới"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="confirm_password">Xác nhận mật khẩu mới:</label>
+                            <input type="password" name="confirm_password" id="confirm_password"
+                                placeholder="Xác nhận mật khẩu mới" required>
+                        </div>
+
+                        <div>
+                            <button type="submit">Đổi mật khẩu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-content" id="discount-content">
+                    <h2>Thiết lập Giảm giá</h2>
+                    <form id="discount-form" action="/settings/update-discount" method="POST">
+                        <div>
+                            <label for="discount_code">Mã giảm giá:</label>
+                            <input type="text" name="discount_code" id="discount_code" placeholder="Nhập mã giảm giá"
+                                required>
+                        </div>
+
+                        <div>
+                            <label for="discount_type">Kiểu giảm giá:</label>
+                            <select name="discount_type" id="discount_type" required>
+                                <option value="percentage">Giảm theo phần trăm</option>
+                                <option value="fixed">Giảm theo giá trị cố định</option>
+                            </select>
+                        </div>
+
+                        <!-- Trường giảm giá theo phần trăm -->
+                        <div id="discount_percentage_wrapper" class="discount_field">
+                            <label for="discount_percentage">Tỷ lệ giảm giá (%):</label>
+                            <input type="number" name="discount_percentage" id="discount_percentage"
+                                placeholder="Nhập tỷ lệ giảm giá">
+                        </div>
+
+                        <!-- Trường giảm giá theo tiền -->
+                        <div id="discount_fixed_wrapper" class="discount_field" style="display: none;">
+                            <label for="discount_fixed">Số tiền giảm giá:</label>
+                            <input type="number" name="discount_fixed" id="discount_fixed"
+                                placeholder="Nhập số tiền giảm giá">
+                        </div>
+
+                        <div>
+                            <label for="expiration_date">Ngày hết hạn:</label>
+                            <input type="date" name="expiration_date" id="expiration_date" required>
+                        </div>
+
+                        <div>
+                            <button type="submit">Lưu Giảm Giá</button>
+                        </div>
+                    </form>
+                </div>
+
+
+            </div>
+
+            <script>
+                // JavaScript để chuyển tab
+                document.getElementById('settings-tab').addEventListener('click', function () {
+                    // Chuyển tab
+                    document.getElementById('settings-tab').classList.add('active');
+                    document.getElementById('password-tab').classList.remove('active');
+                    document.getElementById('discount-tab').classList.remove('active');
+                    document.getElementById('settings-content').classList.add('active');
+                    document.getElementById('password-content').classList.remove('active');
+                    document.getElementById('discount-content').classList.remove('active');
+                });
+
+                document.getElementById('password-tab').addEventListener('click', function () {
+                    // Chuyển tab
+                    document.getElementById('password-tab').classList.add('active');
+                    document.getElementById('settings-tab').classList.remove('active');
+                    document.getElementById('discount-tab').classList.remove('active');
+                    document.getElementById('password-content').classList.add('active');
+                    document.getElementById('settings-content').classList.remove('active');
+                    document.getElementById('discount-content').classList.remove('active');
+                });
+
+                document.getElementById('discount-tab').addEventListener('click', function () {
+                    // Chuyển tab
+                    document.getElementById('discount-tab').classList.add('active');
+                    document.getElementById('settings-tab').classList.remove('active');
+                    document.getElementById('password-tab').classList.remove('active');
+                    document.getElementById('discount-content').classList.add('active');
+                    document.getElementById('settings-content').classList.remove('active');
+                    document.getElementById('password-content').classList.remove('active');
+                });
+
+                // Sử dụng jQuery để gửi yêu cầu PUT cho form Cài đặt
+                $(document).ready(function () {
+                    // Form Cài đặt
+                    $('#settings-form').submit(function (e) {
+                        e.preventDefault(); // Ngừng hành động submit mặc định
+
+                        // Thu thập dữ liệu từ form
+                        var formData = $(this).serialize();
+
+                        // Gửi yêu cầu AJAX
+                        $.ajax({
+                            url: '/settings/update-settings',
+                            type: 'PUT',
+                            data: formData,
+                            success: function (response) {
+                                // Hiển thị thông báo thành công bằng SweetAlert
+                                Swal.fire({
+                                    title: 'Thành công!',
+                                    text: 'Cài đặt của bạn đã được lưu.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    title: 'Lỗi!',
+                                    text: 'Đã có lỗi xảy ra, vui lòng thử lại.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        });
+                    });
+
+                    // Form Đổi mật khẩu
+                    $('#password-form').submit(function (e) {
+                        e.preventDefault(); // Ngừng hành động submit mặc định
+
+                        // Thu thập dữ liệu từ form
+                        var formData = $(this).serialize();
+
+                        // Gửi yêu cầu AJAX
+                        $.ajax({
+                            url: '/settings/change-password',
+                            type: 'PUT',
+                            data: formData,
+                            success: function (response) {
+                                // Xử lý thông báo thành công
+                                Swal.fire({
+                                    title: 'Thành công!',
+                                    text: response.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload(); // Reload lại trang sau khi nhấn OK
+                                    }
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                // Xử lý thông báo lỗi
+                                const errorMessage = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Đã có lỗi xảy ra';
+                                Swal.fire({
+                                    title: 'Lỗi!',
+                                    text: errorMessage,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        });
+                    });
+
+                    // Form Giảm giá
+                    $('#discount-form').submit(function (e) {
+                        e.preventDefault();
+                        var formData = $(this).serialize();
+                        $.ajax({
+                            url: '/settings/create-discount',
+                            type: 'POST',
+                            data: formData,
+                            success: function (response) {
+                                Swal.fire({
+                                    title: 'Thành công!',
+                                    text: 'Giảm giá đã được lưu.',
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.reload();
+                                    }
+                                });
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire({
+                                    title: 'Lỗi!',
+                                    text: 'Đã có lỗi xảy ra, vui lòng thử lại.',
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        });
+                    });
+                });
+                $('#discount_type').change(function () {
+                    var discountType = $(this).val();  // Lấy giá trị kiểu giảm giá
+
+                    if (discountType == 'percent') {
+                        // Hiển thị trường giảm theo phần trăm, ẩn trường giảm theo tiền
+                        $('#discount_percentage_wrapper').show();
+                        $('#discount_fixed_wrapper').hide();
+                    } else if (discountType == 'fixed') {
+                        // Hiển thị trường giảm theo tiền, ẩn trường giảm theo phần trăm
+                        $('#discount_percentage_wrapper').hide();
+                        $('#discount_fixed_wrapper').show();
+                    }
+                });
+
+                // Khởi tạo trạng thái ban đầu khi trang được tải
+                $(document).ready(function () {
+                    $('#discount_type').trigger('change');  // Gọi hàm để set lại giao diện
+                });
+            </script>
+</body>
+
+</html>

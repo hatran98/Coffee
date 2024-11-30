@@ -1,0 +1,26 @@
+<!-- views/login.ejs -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập</title>
+</head>
+<body>
+  <h1>Đăng nhập vào hệ thống</h1>
+  
+  <form action="/login" method="POST">
+    <label for="username">Tên đăng nhập</label>
+    <input type="text" name="username" id="username" required />
+    
+    <label for="password">Mật khẩu</label>
+    <input type="password" name="password" id="password" required />
+    
+    <button type="submit">Đăng nhập</button>
+  </form>
+
+  <% if (errorMessage) { %>
+    <p style="color: red;"><%= errorMessage %></p>
+  <% } %>
+</body>
+</html>

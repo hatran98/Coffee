@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
 }
+
 /* Thiết lập chung cho container */
 .container {
     display: flex;
@@ -29,6 +30,8 @@ table {
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
+    table-layout: auto; 
+    word-wrap: break-word;  
 }
 
 /* Định dạng cột trong bảng */
@@ -38,7 +41,6 @@ th, td {
     border-bottom: 1px solid #ddd;
     font-size: 16px;
 }
-
 /* Màu nền cho tiêu đề */
 th {
     background-color: #4CAF50;
@@ -65,6 +67,41 @@ button:hover {
     background-color: #45a049;
 }
 
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
 /* Responsive - Chế độ di động */
 @media (max-width: 768px) {
     .container {
@@ -83,11 +120,47 @@ button:hover {
 
     table {
         width: 100%;
-        table-layout: fixed;
+        overflow-x: auto; 
+        display: block;    
     }
 
     th, td {
         font-size: 14px;
         padding: 8px;
     }
+
+    .modal-content {
+        width: 90%;
+        margin: 20% auto;
+        padding: 10px;
+    }
+
+    .close-btn {
+        font-size: 24px;
+    }
+    button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
 }
+
+.modal-header {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.modal-body {
+    font-size: 16px;
+}
+
+.modal-footer {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.modal-footer button {
+    margin-left: 10px;
+}
+

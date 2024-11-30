@@ -314,6 +314,25 @@ td button {
 .close-btn:hover {
     background-color: #e53935; /* Màu đỏ đậm khi hover */
 }
+.blinking-text {
+    animation: blink 1s step-start 0s infinite;
+  }
+  
+  @keyframes blink {
+    0% {
+      opacity: 1;
+      color: #ff5733; /* Màu đầu tiên */
+    }
+    50% {
+      opacity: 0;
+      color: #33c4ff; /* Màu thứ hai khi nhấp nháy */
+    }
+    100% {
+      opacity: 1;
+      color: #ff5733; /* Màu đầu tiên */
+    }
+  }
+  
 @media (max-width: 768px) {
     /* Điều chỉnh layout container chính */
     .admin-container {

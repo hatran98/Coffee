@@ -6,10 +6,17 @@ const OrderSchema = new Schema({
   products: [
     {
       product_code: { type: String, ref: 'ProductModel', required: true },
-      quantity: { type: Number, required: true, min: 1 },
+      product_name: { type: String, required: true }, 
+      product_description: { type: String, required: true },  
+      product_type: { type: String, required: true },  
+      brew_type: { type: String, required: true },  
+      weight: { type: String, required: true },  
+      roast_level: { type: String, required: true },  
+      quantity: { type: Number, required: true, min: 1 }, 
       price: { type: Number, required: true }, 
     },
   ],
+  discountCode: { type: String, default: null },
   status: { type: String, enum: ['pending', 'completed', 'cancelled'], default: 'pending' },
   payment_method: { type: String, enum: ['cod', 'sepay'], default: 'sepay' },
   payment_status: { type: String, enum: ['unpaid', 'paid', 'cancelled'], default: 'unpaid' },

@@ -47,8 +47,8 @@ const productSchema = new mongoose.Schema({
     }, 
     status: {
         type: String,
-        enum: ['active', 'inactive'],
-        default: 'active',
+        enum: ['promotion' , 'newlot' , 'active' , 'available'],
+        default: 'newlot',
     },
     brew_type: { 
         type: String,
