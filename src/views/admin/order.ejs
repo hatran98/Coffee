@@ -17,36 +17,54 @@
     <div class="main-content">
       <h1>Quản lý Đơn Hàng</h1>
 
+      <!-- Tìm kiếm và Sắp xếp -->
+      <div class="filters">
+        <!-- Tìm kiếm -->
+        <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã đơn hàng hoặc khách hàng" />
+
+        <!-- Sắp xếp -->
+        <select id="sortBy">
+          <option value="created_at">Sắp xếp theo Ngày tạo</option>
+          <option value="total_price">Sắp xếp theo Tổng tiền</option>
+          <option value="payment_status">Sắp xếp theo Trạng thái thanh toán</option>
+        </select>
+        
+        <button id="applyFilters">Áp dụng</button>
+      </div>
+
       <!-- Bảng quản lý đơn hàng -->
-      <table border="1" cellspacing="0" cellpadding="10">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Mã đơn hàng</th>
-            <th>Khách hàng</th>
-            <th>Ngày tạo</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Hành động</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% orders.forEach((order, index) => { %>
+      <div class="table-container">
+        <table border="1" cellspacing="0" cellpadding="10">
+          <thead>
             <tr>
-              <td><%= index + 1 %></td>
-              <td><%= order._id %></td>
-              <td><%= order.customer_name ? order.customer_name : 'N/A' %></td>
-              <td><%= order.created_at ? order.created_at.toISOString().split('T')[0] : 'N/A' %></td>
-              <td><%= order.total_price ? order.total_price : 'N/A' %></td>
-              <td><%= order.payment_status %></td>
-              <td>
-                <!-- Liên kết tới modal xem chi tiết -->
-                <button class="view-order-btn" data-order-id="<%= order._id %>">Xem</button>
-              </td>
+              <th>#</th>
+              <th>Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Ngày tạo</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
             </tr>
-          <% }); %>
-        </tbody>
-      </table>
+          </thead>
+          <tbody id="ordersTableBody">
+            <% orders.forEach((order, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= order._id %></td>
+                <td><%= order.customer_name ? order.customer_name : 'N/A' %></td>
+                <td>
+                  <%= order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A' %>
+                </td>              
+                <td><%= order.total_price ? order.total_price : 'N/A' %></td>
+                <td><%= order.payment_status === 'paid' ? 'Thanh toán' : 'Chưa Thanh Toán' %></td>
+                <td>
+                  <button class="view-order-btn" data-order-id="<%= order._id %>">Xem</button>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -55,81 +73,139 @@
     <div class="modal-content">
       <span class="close-btn">&times;</span>
       <h2>Chi tiết đơn hàng</h2>
-      <div id="orderDetails">
-        <!-- Chi tiết đơn hàng sẽ được hiển thị ở đây -->
-      </div>
+      <div id="orderDetails"></div>
     </div>
   </div>
 
   <script>
-    // Mở modal khi nhấn "Xem"
-    document.querySelectorAll('.view-order-btn').forEach(button => {
-  button.addEventListener('click', async function() {
-    const orderId = this.getAttribute('data-order-id');
-    
-    // Gửi yêu cầu Ajax để lấy chi tiết đơn hàng
-    try {
-      const response = await fetch(`/admin/order/${orderId}`);
-      const orderData = await response.json();
-      
-      // Hiển thị chi tiết đơn hàng trong modal
-      const orderDetails = document.getElementById('orderDetails');
-      
-      // Hiển thị thông tin chung của đơn hàng
-      let orderHtml = `
-        <p><strong>Mã đơn hàng:</strong> ${orderData._id}</p>
-        <p><strong>Khách hàng:</strong> ${orderData.customer_name}</p>
-        <p><strong>Ngày tạo:</strong> ${new Date(orderData.created_at).toLocaleDateString()}</p>
-        <p><strong>Tổng tiền:</strong> ${orderData.total_price}</p>
-        <p><strong>Trạng thái thanh toán:</strong> ${orderData.payment_status}</p>
-        <p><strong>Phương thức thanh toán:</strong> ${orderData.payment_method}</p>
-      `;
-      
-      // Hiển thị danh sách sản phẩm
-      if (orderData.products && orderData.products.length > 0) {
-        orderHtml += `<h3>Danh sách sản phẩm:</h3><ul>`;
-        orderData.products.forEach(product => {
-          orderHtml += `
-            <li>
-              <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
-              <p><strong>Tên sản phẩm:</strong> ${product.product_name}</p>
-              <p><strong>Miêu tả:</strong> ${product.product_description}</p>
-              <p><strong>Loại sản phẩm:</strong> ${product.product_type}</p>
-              <p><strong>Phương pháp pha chế:</strong> ${product.brew_type}</p>
-              <p><strong>Cân nặng:</strong> ${product.weight}</p>
-              <p><strong>Cấp độ rang:</strong> ${product.roast_level}</p>
-              <p><strong>Số lượng:</strong> ${product.quantity}</p>
-              <p><strong>Giá:</strong> ${product.price}</p>
-            </li>
-          `;
+    const orders = <%- JSON.stringify(orders) %>; // Giả sử đây là dữ liệu đơn hàng từ backend
+
+    // Lọc và sắp xếp đơn hàng khi nhấn "Áp dụng"
+    document.getElementById('applyFilters').addEventListener('click', function() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const sortBy = document.getElementById('sortBy').value;
+
+      let filteredOrders = orders; 
+
+      // Lọc đơn hàng theo từ khóa tìm kiếm
+      if (searchTerm) {
+        filteredOrders = filteredOrders.filter(order => {
+          return order._id.toLowerCase().includes(searchTerm) || 
+                 order.customer_name.toLowerCase().includes(searchTerm);
         });
-        orderHtml += `</ul>`;
-      } else {
-        orderHtml += `<p>Không có sản phẩm trong đơn hàng này.</p>`;
       }
 
-      // Cập nhật nội dung vào modal
-      orderDetails.innerHTML = orderHtml;
-      
-      // Hiển thị modal
-      document.getElementById('orderModal').style.display = 'block';
-    } catch (error) {
-      console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
+      // Sắp xếp đơn hàng theo lựa chọn
+      filteredOrders.sort((a, b) => {
+        if (sortBy === 'created_at') {
+          return new Date(a.created_at) - new Date(b.created_at);
+        } else if (sortBy === 'total_price') {
+          return a.total_price - b.total_price;
+        } else if (sortBy === 'payment_status') {
+          return a.payment_status.localeCompare(b.payment_status);
+        }
+        return 0;
+      });
+
+      // Cập nhật bảng với danh sách đã lọc và sắp xếp
+      updateOrderTable(filteredOrders);
+    });
+
+    function updateOrderTable(orders) {
+      const tbody = document.getElementById('ordersTableBody');
+      tbody.innerHTML = ''; 
+
+      orders.forEach((order, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${order._id}</td>
+          <td>${order.customer_name || 'N/A'}</td>
+          <td>${order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A'}</td>
+          <td>${order.total_price || 'N/A'}</td>
+          <td>${order.payment_status == 'paid' ? 'Thanh toán' : 'Chưa Thanh Toán'}</td>
+          <td>
+            <button class="view-order-btn" data-order-id="${order._id}">Xem</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
     }
-  });
-});
 
-// Đóng modal khi nhấn vào nút đóng
-document.querySelector('.close-btn').addEventListener('click', function() {
-  document.getElementById('orderModal').style.display = 'none';
-});
+    // Mở modal khi nhấn "Xem"
+    document.querySelectorAll('.view-order-btn').forEach(button => {
+      button.addEventListener('click', async function() {
+        const orderId = this.getAttribute('data-order-id');
+        
+        // Gửi yêu cầu Ajax để lấy chi tiết đơn hàng
+        try {
+          const response = await fetch(`/admin/order/${orderId}`);
+          const orderData = await response.json();
+          
+          // Hiển thị chi tiết đơn hàng trong modal
+          const orderDetails = document.getElementById('orderDetails');
+          
+          // Chuyển thời gian tạo đơn hàng về giờ Việt Nam (GMT+7)
+          const vnTime = new Date(orderData.created_at).toLocaleString("vi-VN", {
+            timeZone: 'Asia/Ho_Chi_Minh', // Múi giờ Việt Nam
+            hour12: false // Định dạng 24 giờ
+          });
+          
+          // Hiển thị thông tin chung của đơn hàng
+          let orderHtml = `
+            <p><strong>Mã đơn hàng:</strong> ${orderData._id}</p>
+            <p><strong>Khách hàng:</strong> ${orderData.customer_name}</p>
+            <p><strong>Ngày tạo:</strong> ${vnTime}</p>  <!-- Hiển thị thời gian VN -->
+            <p><strong>Tổng tiền:</strong> ${orderData.total_price}</p>
+            <p><strong>Trạng thái thanh toán:</strong> ${orderData.payment_status}</p>
+            <p><strong>Phương thức thanh toán:</strong> ${orderData.payment_method}</p>
+          `;
+          
+          // Hiển thị danh sách sản phẩm
+          if (orderData.products && orderData.products.length > 0) {
+            orderHtml += `<h3>Danh sách sản phẩm:</h3><ul>`;
+            orderData.products.forEach(product => {
+              orderHtml += `
+                <li>
+                  <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
+                  <p><strong>Tên sản phẩm:</strong> ${product.product_name}</p>
+                  <p><strong>Miêu tả:</strong> ${product.product_description}</p>
+                  <p><strong>Loại sản phẩm:</strong> ${product.product_type}</p>
+                  <p><strong>Phương pháp pha chế:</strong> ${product.brew_type}</p>
+                  <p><strong>Cân nặng:</strong> ${product.weight}</p>
+                  <p><strong>Cấp độ rang:</strong> ${product.roast_level}</p>
+                  <p><strong>Số lượng:</strong> ${product.quantity}</p>
+                  <p><strong>Giá:</strong> ${product.price}</p>
+                </li>
+              `;
+            });
+            orderHtml += `</ul>`;
+          } else {
+            orderHtml += `<p>Không có sản phẩm trong đơn hàng này.</p>`;
+          }
 
-// Đóng modal nếu nhấn ngoài vùng modal
-window.addEventListener('click', function(event) {
-  if (event.target === document.getElementById('orderModal')) {
-    document.getElementById('orderModal').style.display = 'none';
-  }
-});
+          // Cập nhật nội dung vào modal
+          orderDetails.innerHTML = orderHtml;
+          
+          // Hiển thị modal
+          document.getElementById('orderModal').style.display = 'block';
+        } catch (error) {
+          console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
+        }
+      });
+    });
+
+    // Đóng modal khi nhấn vào nút đóng
+    document.querySelector('.close-btn').addEventListener('click', function() {
+      document.getElementById('orderModal').style.display = 'none';
+    });
+
+    // Đóng modal nếu nhấn ngoài vùng modal
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('orderModal')) {
+        document.getElementById('orderModal').style.display = 'none';
+      }
+    });
   </script>
 </body>
 </html>

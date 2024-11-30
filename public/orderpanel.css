@@ -30,8 +30,8 @@ table {
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
-    table-layout: auto; 
-    word-wrap: break-word;  
+    table-layout: auto;
+    word-wrap: break-word;
 }
 
 /* Định dạng cột trong bảng */
@@ -39,8 +39,9 @@ th, td {
     text-align: left;
     padding: 12px;
     border-bottom: 1px solid #ddd;
-    font-size: 16px;
+    font-size: 14px;
 }
+
 /* Màu nền cho tiêu đề */
 th {
     background-color: #4CAF50;
@@ -102,10 +103,24 @@ button:hover {
     cursor: pointer;
 }
 
+.filters {
+    margin-bottom: 20px;
+}
+
+.filters input,
+.filters select {
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.filters button {
+    padding: 5px 10px;
+}
+
 /* Responsive - Chế độ di động */
 @media (max-width: 768px) {
-    .container {
-        flex-direction: column;
+    .main-content {
+        padding: 15px;
     }
 
     .sidebar {
@@ -114,14 +129,17 @@ button:hover {
         height: auto;
     }
 
-    .main-content {
-        padding: 15px;
+    /* Bọc bảng trong một div có thể cuộn */
+    .table-container {
+        overflow-x: auto; /* Cho phép cuộn ngang */
+        -webkit-overflow-scrolling: touch; /* Cuộn mượt mà trên thiết bị di động */
+        max-width: 100%; /* Đảm bảo không vượt quá chiều rộng */
     }
 
     table {
         width: 100%;
-        overflow-x: auto; 
-        display: block;    
+        table-layout: fixed; /* Đảm bảo bảng không bị kéo dài quá */
+        word-wrap: break-word;
     }
 
     th, td {
@@ -138,29 +156,35 @@ button:hover {
     .close-btn {
         font-size: 24px;
     }
+
     button {
         padding: 8px 12px;
         font-size: 14px;
     }
+
+    #sortBy {
+        width: 100%; /* Đảm bảo thẻ select chiếm toàn bộ chiều rộng trên thiết bị di động */
+        font-size: 14px; /* Điều chỉnh font cho dễ nhìn */
+        margin-top: 10px; /* Thêm khoảng cách phía trên cho select */
+    }
 }
 
-.modal-header {
-    font-size: 18px;
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 20px;
+/* Điều chỉnh cho #sortBy */
+#sortBy {
+    padding: 8px 10px; /* Điều chỉnh padding để dễ nhìn */
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
 }
 
-.modal-body {
-    font-size: 16px;
+/* Điều chỉnh dropdown (tùy chọn) */
+#sortBy option {
+    padding: 10px; /* Cải thiện khoảng cách giữa các lựa chọn */
+    transition: all 0.3s ease;
 }
 
-.modal-footer {
-    text-align: right;
-    margin-top: 20px;
+#sortBy:focus {
+    border-color: #4CAF50;  /* Đổi màu viền khi chọn */
+    outline: none;  /* Bỏ outline mặc định */
 }
-
-.modal-footer button {
-    margin-left: 10px;
-}
-

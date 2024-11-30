@@ -31,7 +31,7 @@ const discountSchema = new mongoose.Schema({
         required: false, // Thời gian sử dụng mã giảm giá
     },
     usedByOrderId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'Order', // Nếu bạn lưu thông tin về đơn hàng, liên kết với bảng đơn hàng
         required: false, 
     }

@@ -9,7 +9,7 @@
 <body>
     <div class="container">
         <!-- Tiêu đề báo giá -->
-        <h1 class="main-title">Sản Phẩm 1/11/2024</h1>
+        <h1 class="main-title"></h1>
 
         <!-- Thông tin liên hệ -->
         <div class="header-row">
@@ -158,6 +158,18 @@
     </div>
 
     <!-- JavaScript -->
+    <script>
+        // Lấy ngày hiện tại
+        const today = new Date();
+        const formattedDate = today.toLocaleDateString("vi-VN", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        });
+      
+        // Chèn nội dung vào tiêu đề
+        document.querySelector(".main-title").textContent = `Sản Phẩm ${formattedDate}`;
+      </script>
     <script src="js/order.js"></script>
     <script src="js/orderMb.js"></script>
     <script src="js/custom.js"></script>

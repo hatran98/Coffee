@@ -19,32 +19,37 @@ document.addEventListener('DOMContentLoaded', function () {
     function showModal() {
         // Kiểm tra nếu modal đã tồn tại, không tạo thêm
         if (document.querySelector('.custom-modal')) return;
-
+    
+        // Tạo overlay
+        const overlay = document.createElement('div');
+        overlay.classList.add('modal-overlay');
+        overlay.addEventListener('click', () => {
+            modal.remove();
+            overlay.remove();
+        });
+    
+        // Tạo modal
         const modal = document.createElement('div');
         modal.classList.add('custom-modal');
         modal.style.position = 'fixed';
-        modal.style.top = '50%';
-        modal.style.left = '50%';
-        modal.style.transform = 'translate(-50%, -50%)';
-        modal.style.padding = '20px';
-        modal.style.background = 'white';
-        modal.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
-        modal.style.zIndex = '1000';
-
+    
         const content = document.createElement('div');
-        content.innerText = modalMessage; // Hiển thị thông báo từ settings
-
+        content.innerText = modalMessage || 'Đây là nội dung modal'; // Thay modalMessage bằng thông điệp
+    
         const closeButton = document.createElement('button');
         closeButton.innerText = 'Đóng';
         closeButton.style.marginTop = '10px';
         closeButton.addEventListener('click', () => {
-            modal.remove(); // Loại bỏ modal khi đóng
+            modal.remove(); // Loại bỏ modal
+            overlay.remove(); // Loại bỏ overlay
         });
-
+    
         modal.appendChild(content);
         modal.appendChild(closeButton);
-        document.body.appendChild(modal);
+        document.body.appendChild(overlay); // Thêm overlay trước
+        document.body.appendChild(modal); // Thêm modal sau
     }
+    
 
     // Thêm sự kiện click cho nút increment
     incrementButtons.forEach(button => {

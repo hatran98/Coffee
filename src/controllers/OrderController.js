@@ -4,7 +4,6 @@ exports.createOrder = async (req, res) => {
   try {
     const { customer, discountCode, products, amount } = req.body;
 
-    console.log(req.body, "Request data")
 
     // Kiểm tra dữ liệu đầu vào
     if (!customer || !products || products.length === 0) {
@@ -22,8 +21,19 @@ exports.createOrder = async (req, res) => {
       }
     }
 
+    const lastOrder = await Order.findOne().sort({ _id: -1 }).exec();
+
+    let orderId;
+    if (lastOrder) {
+      console.log(lastOrder,"daosk");
+      const lastOrderId = Number(lastOrder._id) + 1;
+      orderId = parseInt(lastOrderId) + 1;  
+    } else {
+      orderId = 1;
+    }
     // Tạo đối tượng đơn hàng mới
     const newOrder = new Order({
+      _id : orderId,
       customer_name: customer.fullName,
       customer_email: customer.email,
       customer_phone: customer.phone,
