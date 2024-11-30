@@ -65,6 +65,11 @@
           </tbody>
         </table>
       </div>
+      <div id="pagination" class="pagination">
+        <button id="prevPage" class="page-btn" disabled>Trang trước</button>
+        <span id="pageNumber">Trang 1</span>
+        <button id="nextPage" class="page-btn">Trang sau</button>
+      </div>
     </div>
   </div>
 
@@ -78,15 +83,17 @@
   </div>
 
   <script>
-    const orders = <%- JSON.stringify(orders) %>; // Giả sử đây là dữ liệu đơn hàng từ backend
-
+    const orders = <%- JSON.stringify(orders) %>;
+    const ordersPerPage = 10; // Số lượng đơn hàng mỗi trang
+    let currentPage = 1; // Trang hiện tại
+  
     // Lọc và sắp xếp đơn hàng khi nhấn "Áp dụng"
     document.getElementById('applyFilters').addEventListener('click', function() {
       const searchTerm = document.getElementById('searchInput').value.toLowerCase();
       const sortBy = document.getElementById('sortBy').value;
-
-      let filteredOrders = orders; 
-
+  
+      let filteredOrders = orders;
+  
       // Lọc đơn hàng theo từ khóa tìm kiếm
       if (searchTerm) {
         filteredOrders = filteredOrders.filter(order => {
@@ -94,7 +101,7 @@
                  order.customer_name.toLowerCase().includes(searchTerm);
         });
       }
-
+  
       // Sắp xếp đơn hàng theo lựa chọn
       filteredOrders.sort((a, b) => {
         if (sortBy === 'created_at') {
@@ -106,19 +113,26 @@
         }
         return 0;
       });
-
+  
       // Cập nhật bảng với danh sách đã lọc và sắp xếp
       updateOrderTable(filteredOrders);
     });
-
+  
+    // Cập nhật bảng với đơn hàng theo trang
     function updateOrderTable(orders) {
       const tbody = document.getElementById('ordersTableBody');
-      tbody.innerHTML = ''; 
-
-      orders.forEach((order, index) => {
+      tbody.innerHTML = ''; // Xóa nội dung cũ
+  
+      // Lấy phân trang dữ liệu
+      const startIndex = (currentPage - 1) * ordersPerPage;
+      const endIndex = startIndex + ordersPerPage;
+      const paginatedOrders = orders.slice(startIndex, endIndex);
+  
+      // Hiển thị các đơn hàng theo trang
+      paginatedOrders.forEach((order, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${index + 1}</td>
+          <td>${startIndex + index + 1}</td>
           <td>${order._id}</td>
           <td>${order.customer_name || 'N/A'}</td>
           <td>${order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A'}</td>
@@ -130,82 +144,106 @@
         `;
         tbody.appendChild(row);
       });
+  
+      // Cập nhật phân trang
+      updatePagination(orders.length);
+  
+      // Gán sự kiện cho các nút "Xem" mới được tạo ra
+      attachViewOrderEvents();
     }
-
-    // Mở modal khi nhấn "Xem"
-    document.querySelectorAll('.view-order-btn').forEach(button => {
-      button.addEventListener('click', async function() {
-        const orderId = this.getAttribute('data-order-id');
-        
-        // Gửi yêu cầu Ajax để lấy chi tiết đơn hàng
-        try {
-          const response = await fetch(`/admin/order/${orderId}`);
-          const orderData = await response.json();
-          
-          // Hiển thị chi tiết đơn hàng trong modal
-          const orderDetails = document.getElementById('orderDetails');
-          
-          // Chuyển thời gian tạo đơn hàng về giờ Việt Nam (GMT+7)
-          const vnTime = new Date(orderData.created_at).toLocaleString("vi-VN", {
-            timeZone: 'Asia/Ho_Chi_Minh', // Múi giờ Việt Nam
-            hour12: false // Định dạng 24 giờ
-          });
-          
-          // Hiển thị thông tin chung của đơn hàng
-          let orderHtml = `
-            <p><strong>Mã đơn hàng:</strong> ${orderData._id}</p>
-            <p><strong>Khách hàng:</strong> ${orderData.customer_name}</p>
-            <p><strong>Ngày tạo:</strong> ${vnTime}</p>  <!-- Hiển thị thời gian VN -->
-            <p><strong>Tổng tiền:</strong> ${orderData.total_price}</p>
-            <p><strong>Trạng thái thanh toán:</strong> ${orderData.payment_status}</p>
-            <p><strong>Phương thức thanh toán:</strong> ${orderData.payment_method}</p>
-          `;
-          
-          // Hiển thị danh sách sản phẩm
-          if (orderData.products && orderData.products.length > 0) {
-            orderHtml += `<h3>Danh sách sản phẩm:</h3><ul>`;
-            orderData.products.forEach(product => {
-              orderHtml += `
-                <li>
-                  <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
-                  <p><strong>Tên sản phẩm:</strong> ${product.product_name}</p>
-                  <p><strong>Miêu tả:</strong> ${product.product_description}</p>
-                  <p><strong>Loại sản phẩm:</strong> ${product.product_type}</p>
-                  <p><strong>Phương pháp pha chế:</strong> ${product.brew_type}</p>
-                  <p><strong>Cân nặng:</strong> ${product.weight}</p>
-                  <p><strong>Cấp độ rang:</strong> ${product.roast_level}</p>
-                  <p><strong>Số lượng:</strong> ${product.quantity}</p>
-                  <p><strong>Giá:</strong> ${product.price}</p>
-                </li>
-              `;
-            });
-            orderHtml += `</ul>`;
-          } else {
-            orderHtml += `<p>Không có sản phẩm trong đơn hàng này.</p>`;
-          }
-
-          // Cập nhật nội dung vào modal
-          orderDetails.innerHTML = orderHtml;
-          
-          // Hiển thị modal
-          document.getElementById('orderModal').style.display = 'block';
-        } catch (error) {
-          console.error('Lỗi khi lấy chi tiết đơn hàng:', error);
+  
+    // Cập nhật phân trang
+    function updatePagination(totalOrders) {
+      const totalPages = Math.ceil(totalOrders / ordersPerPage);
+      const pageNumberSpan = document.getElementById('pageNumber');
+      const prevPageBtn = document.getElementById('prevPage');
+      const nextPageBtn = document.getElementById('nextPage');
+  
+      // Cập nhật số trang và các nút phân trang
+      pageNumberSpan.textContent = `Trang ${currentPage}`;
+      prevPageBtn.disabled = currentPage === 1;
+      nextPageBtn.disabled = currentPage === totalPages;
+  
+      // Xử lý sự kiện chuyển trang
+      prevPageBtn.onclick = function() {
+        if (currentPage > 1) {
+          currentPage--;
+          updateOrderTable(orders); // Cập nhật bảng khi chuyển trang
         }
-      });
-    });
+      };
+      nextPageBtn.onclick = function() {
+        if (currentPage < totalPages) {
+          currentPage++;
+          updateOrderTable(orders); // Cập nhật bảng khi chuyển trang
+        }
+      };
+    }
+  
+    // Gán sự kiện "Xem" cho các nút "Xem"
+    function attachViewOrderEvents() {
+      document.querySelectorAll('.view-order-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+          const orderId = this.getAttribute('data-order-id');
+  
+          // Gửi yêu cầu Ajax để lấy chi tiết đơn hàng
+          try {
+  const response = await fetch(`/admin/order/${orderId}`);
+  const orderData = await response.json();
 
-    // Đóng modal khi nhấn vào nút đóng
+  // Hiển thị chi tiết đơn hàng trong modal
+  const orderDetails = document.getElementById('orderDetails');
+  const vnTime = new Date(orderData.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false });
+  
+  let orderHtml = `
+    <h3>Thông tin đơn hàng ${orderData._id}</h3>
+    <p><strong>Ngày tạo: ${vnTime}</strong></p>
+    <p><strong>Tên khách hàng: ${orderData.customer_name}</strong></p>
+    <p><strong>Tổng tiền: ${orderData.total_price}</strong></p>
+  `;
+  // Kiểm tra nếu có sản phẩm trong đơn hàng
+  if (orderData.products && orderData.products.length > 0) {
+    orderHtml += `<h3>Danh sách sản phẩm:</h3><ul>`;
+    orderData.products.forEach(product => {
+      orderHtml += `
+        <li>
+          <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
+          <p><strong>Tên sản phẩm:</strong> ${product.product_name}</p>
+          <p><strong>Miêu tả:</strong> ${product.product_description}</p>
+          <p><strong>Loại sản phẩm:</strong> ${product.product_type}</p>
+          <p><strong>Phương pháp pha chế:</strong> ${product.brew_type}</p>
+          <p><strong>Cân nặng:</strong> ${product.weight}</p>
+          <p><strong>Cấp độ rang:</strong> ${product.roast_level}</p>
+          <p><strong>Số lượng:</strong> ${product.quantity}</p>
+          <p><strong>Giá:</strong> ${product.price}</p>
+        </li>
+      `;
+    });
+    orderHtml += `</ul>`;
+  } else {
+    orderHtml += `<p>Không có sản phẩm trong đơn hàng này.</p>`;
+  }
+
+  // Cập nhật nội dung chi tiết đơn hàng trong modal
+  orderDetails.innerHTML = orderHtml;
+
+  // Hiển thị modal
+  document.getElementById('orderModal').style.display = 'block';
+} catch (error) {
+  alert('Không thể tải chi tiết đơn hàng.');
+}
+
+        });
+      });
+    }
+  
+    // Đóng modal
     document.querySelector('.close-btn').addEventListener('click', function() {
       document.getElementById('orderModal').style.display = 'none';
     });
-
-    // Đóng modal nếu nhấn ngoài vùng modal
-    window.addEventListener('click', function(event) {
-      if (event.target === document.getElementById('orderModal')) {
-        document.getElementById('orderModal').style.display = 'none';
-      }
-    });
+  
+    // Hiển thị đơn hàng lần đầu
+    updateOrderTable(orders);
   </script>
+  
 </body>
 </html>

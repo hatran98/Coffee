@@ -42,7 +42,6 @@ router.post('/admin/edit-product',updateProduct);
 router.get('/admin/orders', async (req, res) => {
     try {
       const orders = await fetchOrder();
-  
       res.render('admin/order', { orders });
     } catch (error) {
       console.error('Lỗi khi lấy danh sách đơn hàng:', error);
