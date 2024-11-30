@@ -6,29 +6,29 @@ const bcrypt = require('bcryptjs');
 const User = require('../model/userModel'); // Import model User
 const checkAdmin = require('../middlewares/jwtMiddleware')
 // Route hiển thị form đăng nhập
-router.get('/admin/login', (req, res) => {
+router.get('/login', (req, res) => {
     if (req.cookies.auth_token) {
       return res.redirect('/admin'); 
     }
   
-    res.render('/admin/login', { errorMessage: null });
+    res.render('login', { errorMessage: null });
   });
 
 // Route xử lý đăng nhập
-router.post('/admin/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { username, password } = req.body;
   
     try {
       // Kiểm tra xem người dùng có tồn tại không
       const user = await User.findOne({ username });
       if (!user) {
-        return res.render('/admin/login', { errorMessage: 'Tài khoản không tồn tại!' });
+        return res.render('login', { errorMessage: 'Tài khoản không tồn tại!' });
       }
   
       // Kiểm tra mật khẩu
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.render('/admin/login', { errorMessage: 'Mật khẩu không đúng!' });
+        return res.render('login', { errorMessage: 'Mật khẩu không đúng!' });
       }
   
       // Kiểm tra biến JWT_SECRET
@@ -52,6 +52,6 @@ router.post('/admin/login', async (req, res) => {
 
 router.get('/admin/logout', async (req,res) => {
     res.clearCookie('auth_token');
-    res.redirect('/admin/login');
+    res.redirect('/login');
 } )
 module.exports = router;

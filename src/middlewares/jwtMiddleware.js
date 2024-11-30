@@ -11,7 +11,7 @@ const authenticateUser = async (req, res, next) => {
     
     if (!token) {
         // Nếu không có token, tiếp tục với middleware, để có thể chuyển hướng từ trang login
-        return res.redirect('/admin/login');
+        return res.redirect('/login');
     }
 
     try {
