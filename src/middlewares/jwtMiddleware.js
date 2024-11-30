@@ -10,28 +10,29 @@ const authenticateUser = async (req, res, next) => {
     const token = req.cookies.auth_token; // Lấy token từ cookie 'auth_token'
     
     if (!token) {
-      return res.status(401).json({ message: 'Token xác thực không có' });
+        // Nếu không có token, tiếp tục với middleware, để có thể chuyển hướng từ trang login
+        return res.redirect('/admin/login');
     }
 
     try {
-      // Giải mã token và xác thực thông tin người dùng
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Giải mã token và xác thực thông tin người dùng
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
-      const user = await User.findOne({ _id: decoded.id });
+        // Kiểm tra xem người dùng có tồn tại trong cơ sở dữ liệu không
+        const user = await User.findOne({ _id: decoded.id });
 
-      if (!user) {
-        return res.status(401).json({ message: 'Người dùng không hợp lệ' });
-      }
+        if (!user) {
+            return res.status(401).json({ message: 'Người dùng không hợp lệ' });
+        }
 
-      // Lưu thông tin người dùng vào req.user để sử dụng trong các middleware và route sau
-      req.user = user;
+        // Lưu thông tin người dùng vào req.user để sử dụng trong các middleware và route sau
+        req.user = user;
 
-      next(); // Tiến hành xử lý tiếp theo
+        next(); // Tiến hành xử lý tiếp theo
     } catch (error) {
-      // Xử lý các lỗi liên quan đến xác thực và giải mã token
-      res.status(401).json({ message: 'Lỗi xác thực hoặc token không hợp lệ' });
+        // Xử lý các lỗi liên quan đến xác thực và giải mã token
+        return res.status(401).json({ message: 'Lỗi xác thực hoặc token không hợp lệ' });
     }
-  };
+};
 
 module.exports = authenticateUser;

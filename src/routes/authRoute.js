@@ -6,7 +6,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../model/userModel'); // Import model User
 const checkAdmin = require('../middlewares/jwtMiddleware')
 // Route hiển thị form đăng nhập
-router.get('/login', (req, res) => {
+router.get('/admin/login', (req, res) => {
     if (req.cookies.auth_token) {
       return res.redirect('/admin'); 
     }
@@ -15,7 +15,7 @@ router.get('/login', (req, res) => {
   });
 
 // Route xử lý đăng nhập
-router.post('/login', async (req, res) => {
+router.post('/admin/login', async (req, res) => {
     const { username, password } = req.body;
   
     try {
@@ -50,7 +50,7 @@ router.post('/login', async (req, res) => {
     }
   });
 
-router.get('/logout', async (req,res) => {
+router.get('/admin/logout', async (req,res) => {
     res.clearCookie('auth_token');
     res.redirect('/login');
 } )

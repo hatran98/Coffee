@@ -5,12 +5,11 @@ const checkAdmin = (req, res, next) => {
   const token = req.cookies.auth_token;
 
   if (!token) {
-    return res.redirect('/login'); // Nếu không có token, điều hướng về trang login
+    return res.redirect('/admin/login'); // Nếu không có token, điều hướng về trang login
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     // Kiểm tra quyền admin (ví dụ, nếu decoded.role === 'admin')
     if (decoded.role === 'admin') {
       next(); // Cho phép tiếp tục truy cập vào các route admin
