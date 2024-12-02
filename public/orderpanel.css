@@ -116,6 +116,10 @@ button:hover {
 .filters button {
     padding: 5px 10px;
 }
+.total-revenue{
+    margin-top: 5px;
+    font-weight: bold;
+}
 
 /* Responsive - Chế độ di động */
 @media (max-width: 768px) {

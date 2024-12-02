@@ -1,6 +1,6 @@
 const Product = require('../model/productModel');
 const Country = require('../model/countryModel');
-
+const SpecialProduct = require('../model/specialProductModel');
 
 const updateProductLimit = async (req, res) => {
   try {
@@ -68,6 +68,15 @@ const createQuote = async (req, res) => {
         message: 'Tên sản phẩm, mã sản phẩm, giá, kiểu pha chế, trọng lượng và kiểu rang là bắt buộc!',
       });
     }
+
+    const existingProduct = await Product.findOne({ product_code: code });
+    if (existingProduct) {
+      return res.status(400).json({
+        success: false,
+        message: 'Mã sản phẩm đã tồn tại!',
+      });
+    }
+
 
     if (price <= 0) {
       return res.status(400).json({
@@ -222,13 +231,14 @@ const getProducts = async (req, res) => {
         $unwind: "$countryInfo" // Chỉ lấy 1 quốc gia cho mỗi nhóm
       },
       {
-        $sort: { "_id": 1 } // Sắp xếp theo tên quốc gia
+        $sort: { "_id": 1 } // Sắp xếp theo tên quốc gias
       }
     ]);
 
+    const specialProducts = await SpecialProduct.find({ is_active: true });
 
     // Truyền dữ liệu nhóm sản phẩm theo country vào template
-    res.render("index", { products: productsByCountry });
+    res.render("index", { products: productsByCountry , specialProducts });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Lỗi khi tải dữ liệu sản phẩm' });
@@ -264,10 +274,38 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const checkSpecialProductCondition = async (cartItems) => {
+  // Tính tổng số lượng các sản phẩm cà phê trong giỏ hàng
+  const coffeeItems = cartItems.filter(item => item.product_type === 'coffee');
+  let totalQuantity = 0;
+
+  coffeeItems.forEach(item => {
+      totalQuantity += item.quantity;
+  });
+
+  if (totalQuantity >= 5) { // Điều kiện để nhận túi mù
+      // Kiểm tra sản phẩm đặc biệt (túi mù)
+      const specialProduct = await SpecialProduct.findOne({ related_product_type: 'coffee' });
+      
+      if (specialProduct) {
+          // Thêm sản phẩm đặc biệt (túi mù) vào giỏ hàng
+          cartItems.push({
+              product_id: specialProduct._id,
+              product_name: specialProduct.product_name,
+              price: specialProduct.price, // Giá của sản phẩm đặc biệt (có thể là miễn phí)
+              quantity: 1,
+          });
+      }
+  }
+  // Giỏ hàng vẫn tiếp tục với các sản phẩm bình thường
+  return cartItems;
+};
 
 
 
 
 
 
-module.exports = { createQuote, getCountries , updateProductLimit , updateProduct , getProducts , deleteProduct  };
+
+
+module.exports = { createQuote, getCountries , updateProductLimit , updateProduct , getProducts , deleteProduct , checkSpecialProductCondition  };

@@ -2,9 +2,10 @@ const Order = require('../model/orderModel');
 
 exports.createOrder = async (req, res) => {
   try {
-    const { customer, discountCode, products, amount } = req.body;
+    const { customer, discountCode, products, amount , special_product } = req.body;
 
 
+    console.log(special_product,"dáoidoskdoksa");
     // Kiểm tra dữ liệu đầu vào
     if (!customer || !products || products.length === 0) {
       return res.status(400).json({
@@ -25,8 +26,7 @@ exports.createOrder = async (req, res) => {
 
     let orderId;
     if (lastOrder) {
-      console.log(lastOrder,"daosk");
-      const lastOrderId = Number(lastOrder._id) + 1;
+      const lastOrderId = Number(lastOrder._id);
       orderId = parseInt(lastOrderId) + 1;  
     } else {
       orderId = 1;
@@ -48,6 +48,11 @@ exports.createOrder = async (req, res) => {
         price: parseFloat(product.price),
         quantity: product.quantity,
         limit: product.limit,
+      })),
+      special_product : special_product.map((product) => ({
+        product_name: product.productName,
+        price: parseFloat(product.price),
+        quantity: product.quantity
       })),
       total_price: amount, // Sử dụng amount từ request body
       discount_code: discountCode || null,

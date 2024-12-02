@@ -27,6 +27,8 @@
                     <div class="tab active" id="settings-tab">Cài đặt</div>
                     <div class="tab" id="password-tab">Đổi mật khẩu</div>
                     <div class="tab" id="discount-tab">Giảm giá</div> <!-- Thêm tab giảm giá -->
+                    <div class="tab" id="special-product-tab">Sản phẩm đặc biệt</div>
+                    <!-- Tab mới cho sản phẩm đặc biệt -->
                 </div>
 
                 <!-- Nội dung Tab Cài đặt -->
@@ -98,10 +100,10 @@
                     <form id="discount-form" action="/settings/update-discount" method="POST">
                         <div>
                             <label for="discount_code">Mã giảm giá:</label>
-                            <input type="text" name="discount_code" id="discount_code" placeholder="Nhập mã giảm giá" required 
-                                   pattern="^[A-Za-z0-9]{10}$" title="Mã giảm giá phải gồm 10 ký tự alphanumeric">
+                            <input type="text" name="discount_code" id="discount_code" placeholder="Nhập mã giảm giá"
+                                required pattern="^[A-Za-z0-9]{10}$" title="Mã giảm giá phải gồm 10 ký tự alphanumeric">
                         </div>
-                
+
                         <div>
                             <label for="discount_type">Kiểu giảm giá:</label>
                             <select name="discount_type" id="discount_type" required>
@@ -109,32 +111,84 @@
                                 <option value="fixed">Giảm theo giá trị cố định</option>
                             </select>
                         </div>
-                
+
                         <!-- Trường giảm giá theo phần trăm -->
                         <div id="discount_percentage_wrapper" class="discount_field">
                             <label for="discount_percentage">Tỷ lệ giảm giá (%):</label>
                             <input type="number" name="discount_percentage" id="discount_percentage"
                                 placeholder="Nhập tỷ lệ giảm giá">
                         </div>
-                
+
                         <!-- Trường giảm giá theo tiền -->
                         <div id="discount_fixed_wrapper" class="discount_field" style="display: none;">
                             <label for="discount_fixed">Số tiền giảm giá:</label>
                             <input type="number" name="discount_fixed" id="discount_fixed"
                                 placeholder="Nhập số tiền giảm giá">
                         </div>
-                
+
                         <div>
                             <label for="expiration_date">Ngày hết hạn:</label>
                             <input type="date" name="expiration_date" id="expiration_date" required>
                         </div>
-                
+
                         <div>
                             <button type="submit">Lưu Giảm Giá</button>
                         </div>
                     </form>
                 </div>
-                
+
+                <div class="tab-content" id="special-product-content">
+                    <h2>Thêm sản phẩm đặc biệt</h2>
+
+                    <!-- Form tạo sản phẩm đặc biệt -->
+                    <form id="special-product-form" action="/settings/create-special-product" method="POST">
+                        <div>
+                            <label for="product_name">Tên sản phẩm:</label>
+                            <input type="text" name="product_name" id="product_name" required
+                                placeholder="Nhập tên sản phẩm đặc biệt">
+                        </div>
+
+                        <div>
+                            <label for="quantity_required">Số lượng cần mua:</label>
+                            <input type="number" name="quantity_required" id="quantity_required" required min="1"
+                                placeholder="Nhập số lượng cần mua">
+                        </div>
+
+                        <div>
+                            <label for="price">Giá sản phẩm:</label>
+                            <input type="number" name="price" id="price" value="0" required min="0"
+                                placeholder="Nhập giá sản phẩm đặc biệt">
+                        </div>
+                        <div>
+                            <label for="is_active">Trạng thái:</label>
+                            <input type="checkbox" name="is_active" id="is_active" checked>
+                        </div>
+
+                        <div>
+                            <button type="submit">Lưu sản phẩm đặc biệt</button>
+                        </div>
+                    </form>
+
+                    <hr>
+
+                    <h2>Danh sách sản phẩm đặc biệt</h2>
+                    <!-- Bảng hiển thị danh sách sản phẩm đặc biệt -->
+                    <table id="special-product-table">
+                        <thead>
+                            <tr>
+                                <th>Tên sản phẩm</th>
+                                <th>Số lượng cần mua</th>
+                                <th>Giá</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Các sản phẩm sẽ được hiển thị ở đây -->
+                        </tbody>
+                    </table>
+                </div>
+
 
 
             </div>
@@ -146,9 +200,11 @@
                     document.getElementById('settings-tab').classList.add('active');
                     document.getElementById('password-tab').classList.remove('active');
                     document.getElementById('discount-tab').classList.remove('active');
+                    document.getElementById('special-product-tab').classList.remove('active');
                     document.getElementById('settings-content').classList.add('active');
                     document.getElementById('password-content').classList.remove('active');
                     document.getElementById('discount-content').classList.remove('active');
+                    document.getElementById('special-product-content').classList.remove('active');
                 });
 
                 document.getElementById('password-tab').addEventListener('click', function () {
@@ -156,9 +212,11 @@
                     document.getElementById('password-tab').classList.add('active');
                     document.getElementById('settings-tab').classList.remove('active');
                     document.getElementById('discount-tab').classList.remove('active');
+                    document.getElementById('special-product-tab').classList.remove('active');
                     document.getElementById('password-content').classList.add('active');
                     document.getElementById('settings-content').classList.remove('active');
                     document.getElementById('discount-content').classList.remove('active');
+                    document.getElementById('special-product-content').classList.remove('active');
                 });
 
                 document.getElementById('discount-tab').addEventListener('click', function () {
@@ -166,11 +224,23 @@
                     document.getElementById('discount-tab').classList.add('active');
                     document.getElementById('settings-tab').classList.remove('active');
                     document.getElementById('password-tab').classList.remove('active');
+                    document.getElementById('special-product-tab').classList.remove('active');
                     document.getElementById('discount-content').classList.add('active');
                     document.getElementById('settings-content').classList.remove('active');
                     document.getElementById('password-content').classList.remove('active');
+                    document.getElementById('special-product-content').classList.remove('active');
                 });
 
+                document.getElementById('special-product-tab').addEventListener('click', function () {
+                    document.getElementById('special-product-tab').classList.add('active');
+                    document.getElementById('settings-tab').classList.remove('active');
+                    document.getElementById('password-tab').classList.remove('active');
+                    document.getElementById('discount-tab').classList.remove('active');
+                    document.getElementById('special-product-content').classList.add('active');
+                    document.getElementById('settings-content').classList.remove('active');
+                    document.getElementById('password-content').classList.remove('active');
+                    document.getElementById('discount-content').classList.remove('active');
+                });
                 // Sử dụng jQuery để gửi yêu cầu PUT cho form Cài đặt
                 $(document).ready(function () {
                     // Form Cài đặt
@@ -291,6 +361,133 @@
                         $('#discount_fixed_wrapper').show();
                     }
                 });
+
+                $(document).ready(function () {
+    // Load danh sách sản phẩm đặc biệt
+    function loadSpecialProducts() {
+        $.ajax({
+            url: '/settings/get-special-products', // API lấy danh sách sản phẩm đặc biệt
+            type: 'GET',
+            success: function (response) {
+                console.log(response,"dsaodkasodkasodksaodksaokdaodksaokdoas")
+                var tableBody = $('#special-product-table tbody');
+                tableBody.empty(); // Xóa các dòng cũ
+
+                // Kiểm tra nếu không có sản phẩm nào
+                if (response && response.length > 0) {
+        response.forEach(function (product) {
+            tableBody.append(`
+                <tr data-id="${product._id}">
+                    <td>${product.product_name}</td>
+                    <td>${product.quantity_required}</td>
+                    <td>${product.price}</td>
+                    <td>${product.is_active == true ? 'Đang bán' : 'Đóng'} </td>
+                    <td>
+                        <button class="edit-btn">Sửa</button>
+                        <button class="delete-btn">Xoá</button>
+                    </td>
+                </tr>
+            `);
+        });
+    } else {
+        // Hiển thị thông báo khi không có sản phẩm
+        tableBody.append(`
+            <tr>
+                <td colspan="4" style="text-align: center;">Không có sản phẩm đặc biệt nào.</td>
+            </tr>
+        `);
+    }
+            },
+            error: function () {
+                alert('Lỗi khi tải danh sách sản phẩm.');
+            }
+        });
+    }
+
+    // Tải danh sách sản phẩm khi trang được tải
+    loadSpecialProducts();
+
+    // Sửa sản phẩm
+    $('#special-product-table').on('click', '.edit-btn', function () {
+    var row = $(this).closest('tr');
+    var id = row.data('id');
+    var productName = row.find('td').eq(0).text();
+    var quantityRequired = row.find('td').eq(1).text();
+    var price = row.find('td').eq(2).text();
+    var isActive = row.find('td').eq(3).text().trim() === 'Đang bán'; 
+
+    // Điền dữ liệu vào form
+    $('#product_name').val(productName);
+    $('#quantity_required').val(quantityRequired);
+    $('#price').val(price);
+
+    if (isActive) {
+        $('#is_active').prop('checked', true); 
+    } else {
+        $('#is_active').prop('checked', false); 
+    }
+
+    // Thay đổi action của form thành sửa
+    $('#special-product-form').attr('action', '/settings/update-special-product/' + id);
+});
+    // Xoá sản phẩm
+    $('#special-product-table').on('click', '.delete-btn', function () {
+        var row = $(this).closest('tr');
+        var id = row.data('id');
+
+        if (confirm('Bạn có chắc chắn muốn xoá sản phẩm này?')) {
+            $.ajax({
+                url: '/settings/delete-special-product/' + id,
+                type: 'DELETE',
+                success: function () {
+                    row.remove();
+                    alert('Sản phẩm đã được xoá.');
+                },
+                error: function () {
+                    alert('Lỗi khi xoá sản phẩm.');
+                }
+            });
+        }
+    });
+
+    // Xử lý submit form để thêm/sửa sản phẩm
+    $('#special-product-form').submit(function (e) {
+    e.preventDefault(); // Ngừng hành động submit mặc định
+
+    var formData = $(this).serializeArray(); // Sử dụng serializeArray() thay vì serialize() để dễ dàng thay đổi giá trị
+    var actionUrl = $(this).attr('action');
+
+    // Kiểm tra trạng thái của checkbox 'is_active' và thêm trường vào formData
+    var isActiveValue = $('#is_active').prop('checked') ? true : false;
+    
+    // Kiểm tra và thay đổi giá trị trường 'is_active'
+    var isActiveField = formData.find(field => field.name === 'is_active');
+    if (isActiveField) {
+        // Nếu trường 'is_active' có sẵn, sửa giá trị
+        isActiveField.value = isActiveValue;
+    } else {
+        // Nếu không có trường 'is_active', thêm nó vào formData
+        formData.push({ name: 'is_active', value: isActiveValue });
+    }
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: formData,
+        success: function () {
+            // Tải lại danh sách sản phẩm sau khi thêm/sửa thành công
+            loadSpecialProducts();
+
+            // Reset form
+            $('#special-product-form')[0].reset();
+            alert('Sản phẩm đã được lưu.');
+        },
+        error: function () {
+            alert('Lỗi khi lưu sản phẩm.');
+        }
+    });
+});
+});
 
                 // Khởi tạo trạng thái ban đầu khi trang được tải
                 $(document).ready(function () {

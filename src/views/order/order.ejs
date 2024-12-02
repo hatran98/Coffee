@@ -134,27 +134,31 @@
 
         // Hàm lấy dữ liệu đơn hàng từ localStorage và cập nhật bảng
         function loadOrderDetails() {
-            const orderDetails = JSON.parse(localStorage.getItem('orderDetails'));
+        const specialProductOrderdetails = JSON.parse(localStorage.getItem('specialProductsOrderdetails')) || []; 
+        const productOrderdetails = JSON.parse(localStorage.getItem('productsOrderdetails')) || []; // Lấy sản phẩm bình thường
 
-            if (orderDetails) {
-                let totalAmount = 0;
-                const tableBody = document.getElementById('productTableBody');
-                orderDetails.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${product.productCode}</td>
-                        <td>${product.productName}</td>
-                        <td>${product.quantity}</td>
-                        <td>${product.price} VND</td>
-                        <td class="total-price">${(product.quantity * product.price).toFixed(2)} VND</td>
-                    `;
-                    tableBody.appendChild(row);
-                    totalAmount += product.quantity * product.price;
-                });
+        // Kết hợp cả hai mảng sản phẩm lại nếu cần thiết
+        const allOrderDetails = [...specialProductOrderdetails, ...productOrderdetails];
 
-                document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
-            }
+        if (allOrderDetails.length > 0) {
+            let totalAmount = 0;
+            const tableBody = document.getElementById('productTableBody');
+            allOrderDetails.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.productCode || product.productName}</td>
+                    <td>${product.productName}</td>
+                    <td>${product.quantity}</td>
+                    <td>${product.price} VND</td>
+                    <td class="total-price">${(product.quantity * product.price).toFixed(2)} VND</td>
+                `;
+                tableBody.appendChild(row);
+                totalAmount += product.quantity * product.price;
+            });
+
+            document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
         }
+    }
 
         // Gọi hàm để load dữ liệu khi trang được tải
         window.onload = loadOrderDetails;
@@ -204,7 +208,8 @@
                 },
                 discountCode: discountCode,
                 amount: totalAmount,
-                products: JSON.parse(localStorage.getItem('orderDetails') || '[]') // Lấy thông tin sản phẩm từ localStorage
+                products: JSON.parse(localStorage.getItem('productsOrderdetails') || '[]'), // Lấy thông tin sản phẩm từ localStorage
+                special_product: JSON.parse(localStorage.getItem('specialProductsOrderdetails') || '[]')
             };
 
             try {

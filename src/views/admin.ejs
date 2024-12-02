@@ -430,7 +430,7 @@ $(document).ready(function() {
           // Xử lý lỗi nếu có
           Swal.fire({
             title: 'Lỗi!',
-            text: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+            text: xhr.responseJSON.message,
             icon: 'error',
             confirmButtonText: 'OK'
           });
@@ -476,7 +476,7 @@ $(document).ready(function() {
       error: function(xhr, status, error) {
         Swal.fire({
           title: 'Lỗi!',
-          text: 'Đã có lỗi xảy ra. Vui lòng thử lại.',
+          text: xhr.responseJSON.message,
           icon: 'error',
           confirmButtonText: 'OK'
         });

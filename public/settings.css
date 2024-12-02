@@ -126,6 +126,17 @@ input[disabled] {
     background-color: #f9f9f9;
 }
 
+#special-product-table {
+    width: 100%; /* Bảng sẽ chiếm toàn bộ chiều rộng */
+    border-collapse: collapse; /* Kết hợp các đường biên của bảng */
+}
+
+#special-product-table th, #special-product-table td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd; /* Viền cho các ô trong bảng */
+}
+
 /* Responsive - Chế độ di động */
 @media (max-width: 768px) {
     .container {
@@ -161,5 +172,36 @@ input[disabled] {
     button {
         padding: 8px 16px;
         font-size: 14px;
+    }
+
+    #special-product-table {
+        width: 100%; /* Cũng để bảng chiếm toàn bộ chiều rộng, có thể điều chỉnh nếu muốn */
+    }
+
+    #special-product-table th, #special-product-table td {
+        padding: 8px; /* Giảm khoảng cách padding khi trên màn hình nhỏ */
+    }
+
+    #special-product-table td {
+        display: block; /* Các cột sẽ hiển thị như các dòng khi ở mobile */
+        width: 100%; /* Mỗi ô sẽ chiếm toàn bộ chiều rộng của bảng */
+        text-align: left; /* Canh trái các ô trên mobile */
+    }
+
+    #special-product-table th {
+        display: none; /* Ẩn tiêu đề cột ở mobile */
+    }
+
+    /* Thêm một đường viền giữa các dòng cho dễ nhìn trên mobile */
+    #special-product-table tr {
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* Hiển thị tên cột trong từng ô trên mobile */
+    #special-product-table td::before {
+        content: attr(data-label); /* Thêm tên cột vào ô */
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
     }
 }

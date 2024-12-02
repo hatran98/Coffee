@@ -21,9 +21,30 @@
 
         <!-- Giao diện desktop -->
         <div class="section desktop-view">
+            <div class="section special-products">
+                <h2>Sản Phẩm Đặc Biệt</h2>
+                <div id="special-products-list" class="special-products-list">
+                    <% specialProducts.forEach(product => { %>
+                        <div class="special-product-item">
+                            <div class="product-info">
+                                <h3 class="product-name"><%= product.product_name %></h3>
+                                <p class="product-quantity_required"><%= product.quantity_required %></p>
+                                <p class="product-price">Giá: <%= product.price %> VND</p>
+                            </div>
+                            <div class="quantity-container">
+                                <button class="special-decrement">-</button>
+                                <input type="number" class="number-input" value="0" min="0" max="10" data-product-id="123" />
+                                <button class="special-increment">+</button>
+                            </div>
+                            
+                        </div>
+                    <% }); %>
+                </div>
+            </div>
+            
+        
             <% products.forEach(group => { %>
                 <div class="table-container">
-                    <!-- Hiển thị cờ và tên quốc gia -->
                     <p class="country">
                         <span class="flag"><%= group.countryInfo.flag %></span>
                         <span class="text"><%= group.countryInfo.name %></span>
@@ -52,10 +73,10 @@
                                                 <%= product.product_name %>
                                                 <span 
                                                     class="product-status <%= product.status === 'newlot' ? 'blinking-text newlot' : 
-                                                                           product.status === 'promotion' ? 'blinking-text promotion' :
-                                                                           product.status === 'active' ? 'blinking-text active' :
-                                                                           product.status === 'available' ? 'blinking-text available' :
-                                                                           'default' %>">
+                                                                       product.status === 'promotion' ? 'blinking-text promotion' :
+                                                                       product.status === 'active' ? 'blinking-text active' :
+                                                                       product.status === 'available' ? 'blinking-text available' :
+                                                                       'default' %>">
                                                     <% if (product.status === 'newlot') { %>
                                                         New
                                                     <% } else if (product.status === 'promotion') { %>
@@ -91,9 +112,9 @@
                     </table>
                 </div>
             <% }); %>
-        <button class="order-button">Đặt hàng</button>
-
+            <button class="order-button">Đặt hàng</button>
         </div>
+        
 
         <!-- Giao diện mobile -->
         <div class="section mobile-view">
@@ -173,5 +194,6 @@
     <script src="js/order.js"></script>
     <script src="js/orderMb.js"></script>
     <script src="js/custom.js"></script>
+    <script src="js/special.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ const User = require('../model/userModel');
 const bcrypt = require('bcryptjs');
 const Settings = require('../model/settingModel');
 const Discount = require('../model/discountModel');
+const SpecialProduct = require('../model/specialProductModel');
 // Cập nhật mật khẩu của user
 const changePassword = async (req, res) => {
   const { old_password, new_password } = req.body;
@@ -221,6 +222,42 @@ const getDiscountById = async (req,res) => {
   }
 }
 
+const createSpecialProduct = async (req,res) => {
+  try {
+    const product = await SpecialProduct.create(req.body);
+    res.status(200).json(product);
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: error.message });
+  }
+}
+
+const getSpecialProducts = async (req,res) => {
+  try {
+    const products = await SpecialProduct.find().sort({ createdAt: -1 });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+const updateSpecialProduct = async (req,res) => {
+  try {
+    const product = await SpecialProduct.findByIdAndUpdate(req.params.id, req.body);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
+const deleteSpecialProduct = async (req,res) => {
+  try {
+    const product = await SpecialProduct.findByIdAndDelete(req.params.id);
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 module.exports = {
   changePassword,
@@ -231,5 +268,9 @@ module.exports = {
   updateDiscount,
   deleteDiscount,
   checkDiscount,
-  getDiscountById
+  getDiscountById,
+  createSpecialProduct,
+  getSpecialProducts,
+  updateSpecialProduct,
+  deleteSpecialProduct
 };

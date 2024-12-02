@@ -21,14 +21,18 @@
       <div class="filters">
         <!-- Tìm kiếm -->
         <input type="text" id="searchInput" placeholder="Tìm kiếm theo mã đơn hàng hoặc khách hàng" />
-
+      
         <!-- Sắp xếp -->
         <select id="sortBy">
           <option value="created_at">Sắp xếp theo Ngày tạo</option>
           <option value="total_price">Sắp xếp theo Tổng tiền</option>
           <option value="payment_status">Sắp xếp theo Trạng thái thanh toán</option>
         </select>
-        
+      
+        <!-- Lọc theo ngày -->
+        <input type="date" id="startDate" />
+        <input type="date" id="endDate" />
+      
         <button id="applyFilters">Áp dụng</button>
       </div>
 
@@ -49,7 +53,7 @@
             <% orders.forEach((order, index) => { %>
               <tr>
                 <td><%= order._id %></td>
-                <td><%= order.customer_name ? order.customer_name : 'N/A' %></td>
+                <td><%= order.customer_phone ? order.customer_phone : 'N/A' %></td>
                 <td>
                   <%= order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A' %>
                 </td>              
@@ -62,6 +66,9 @@
             <% }); %>
           </tbody>
         </table>
+        <div class="total-revenue">
+          <strong>Tổng tiền thu được: </strong><span id="totalRevenue">0</span> VNĐ
+        </div>
       </div>
       <div id="pagination" class="pagination">
         <button id="prevPage" class="page-btn" disabled>Trang trước</button>
@@ -87,69 +94,95 @@
   
     // Lọc và sắp xếp đơn hàng khi nhấn "Áp dụng"
     document.getElementById('applyFilters').addEventListener('click', function() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const sortBy = document.getElementById('sortBy').value;
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+  const sortBy = document.getElementById('sortBy').value;
   
-      let filteredOrders = orders;
-  
-      // Lọc đơn hàng theo từ khóa tìm kiếm
-      if (searchTerm) {
-        filteredOrders = filteredOrders.filter(order => {
-          return order._id.toLowerCase().includes(searchTerm) || 
-                 order.customer_name.toLowerCase().includes(searchTerm);
-        });
-      }
-  
-      // Sắp xếp đơn hàng theo lựa chọn
-      filteredOrders.sort((a, b) => {
-        if (sortBy === 'created_at') {
-          return new Date(a.created_at) - new Date(b.created_at);
-        } else if (sortBy === 'total_price') {
-          return a.total_price - b.total_price;
-        } else if (sortBy === 'payment_status') {
-          return a.payment_status.localeCompare(b.payment_status);
-        }
-        return 0;
-      });
-  
-      // Cập nhật bảng với danh sách đã lọc và sắp xếp
-      updateOrderTable(filteredOrders);
+  const startDate = document.getElementById('startDate').value;
+  const endDate = document.getElementById('endDate').value;
+
+  let filteredOrders = orders;
+
+  // Lọc đơn hàng theo từ khóa tìm kiếm
+  if (searchTerm) {
+    filteredOrders = filteredOrders.filter(order => {
+      return order._id.toLowerCase().includes(searchTerm) || 
+             order.customer_name.toLowerCase().includes(searchTerm);
     });
-  
+  }
+
+  // Lọc theo ngày
+  if (startDate) {
+    filteredOrders = filteredOrders.filter(order => {
+      const orderDate = new Date(order.created_at).toISOString().split('T')[0]; // Chuyển ngày đơn hàng thành định dạng yyyy-mm-dd
+      return orderDate >= startDate;
+    });
+  }
+
+  if (endDate) {
+    filteredOrders = filteredOrders.filter(order => {
+      const orderDate = new Date(order.created_at).toISOString().split('T')[0]; // Chuyển ngày đơn hàng thành định dạng yyyy-mm-dd
+      return orderDate <= endDate;
+    });
+  }
+
+  // Sắp xếp đơn hàng theo lựa chọn
+  filteredOrders.sort((a, b) => {
+    if (sortBy === 'created_at') {
+      return new Date(a.created_at) - new Date(b.created_at);
+    } else if (sortBy === 'total_price') {
+      return a.total_price - b.total_price;
+    } else if (sortBy === 'payment_status') {
+      return a.payment_status.localeCompare(b.payment_status);
+    }
+    return 0;
+  });
+
+  // Cập nhật bảng với danh sách đã lọc và sắp xếp
+  updateOrderTable(filteredOrders);
+});
     // Cập nhật bảng với đơn hàng theo trang
     function updateOrderTable(orders) {
-      const tbody = document.getElementById('ordersTableBody');
-      tbody.innerHTML = ''; // Xóa nội dung cũ
-  
-      // Lấy phân trang dữ liệu
-      const startIndex = (currentPage - 1) * ordersPerPage;
-      const endIndex = startIndex + ordersPerPage;
-      const paginatedOrders = orders.slice(startIndex, endIndex);
-  
-      // Hiển thị các đơn hàng theo trang
-      paginatedOrders.forEach((order, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${order._id}</td>
-          <td>${order.customer_name || 'N/A'}</td>
-          <td>${order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A'}</td>
-          <td>${order.total_price || 'N/A'}</td>
-          <td>${order.payment_status == 'paid' ? 'Thanh toán' : 'Chưa Thanh Toán'}</td>
-          <td>
-            <button class="view-order-btn" data-order-id="${order._id}">Xem</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-  
-      // Cập nhật phân trang
-      updatePagination(orders.length);
-  
-      // Gán sự kiện cho các nút "Xem" mới được tạo ra
-      attachViewOrderEvents();
+  const tbody = document.getElementById('ordersTableBody');
+  tbody.innerHTML = ''; // Xóa nội dung cũ
+
+  // Tính tổng tiền thu được
+  let totalRevenue = 0;
+
+  // Lấy phân trang dữ liệu
+  const startIndex = (currentPage - 1) * ordersPerPage;
+  const endIndex = startIndex + ordersPerPage;
+  const paginatedOrders = orders.slice(startIndex, endIndex);
+
+  // Hiển thị các đơn hàng theo trang
+  paginatedOrders.forEach((order) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${order._id}</td>
+      <td>${order.customer_phone || 'N/A'}</td>
+      <td>${order.created_at ? new Date(order.created_at).toLocaleString("vi-VN", { timeZone: 'Asia/Ho_Chi_Minh', hour12: false }) : 'N/A'}</td>
+      <td>${order.total_price || 'N/A'}</td>
+      <td>${order.payment_status === 'paid' ? 'Thanh toán' : 'Chưa Thanh Toán'}</td>
+      <td>
+        <button class="view-order-btn" data-order-id="${order._id}">Xem</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+
+    // Nếu đơn hàng đã thanh toán, cộng vào tổng tiền thu được
+    if (order.payment_status === 'paid') {
+      totalRevenue += order.total_price || 0;
     }
-  
-    // Cập nhật phân trang
+  });
+
+  // Cập nhật tổng tiền thu được
+  document.getElementById('totalRevenue').textContent = totalRevenue.toLocaleString('vi-VN');
+
+  // Cập nhật phân trang
+  updatePagination(orders.length);
+
+  // Gán sự kiện cho các nút "Xem" mới được tạo ra
+  attachViewOrderEvents();
+}
     function updatePagination(totalOrders) {
       const totalPages = Math.ceil(totalOrders / ordersPerPage);
       const pageNumberSpan = document.getElementById('pageNumber');
@@ -195,6 +228,7 @@
     <h3>Thông tin đơn hàng ${orderData._id}</h3>
     <p><strong>Ngày tạo: ${vnTime}</strong></p>
     <p><strong>Tên khách hàng: ${orderData.customer_name}</strong></p>
+    <p><strong>Số điện thoại: ${orderData.customer_phone}</strong></p>
     <p><strong>Tổng tiền: ${orderData.total_price}</strong></p>
   `;
   // Kiểm tra nếu có sản phẩm trong đơn hàng

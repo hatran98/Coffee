@@ -65,6 +65,11 @@ const productSchema = new mongoose.Schema({
         required: true,
         enum: ['Light', 'Light Medium', 'Medium', 'Medium-Dark', 'Dark', 'Very Dark'], 
     },
+    special_product_id: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'SpecialProduct',
+        default: null,
+    },
 }, { 
     timestamps: true 
 });
