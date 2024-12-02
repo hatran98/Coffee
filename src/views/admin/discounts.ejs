@@ -1,71 +1,267 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý Giảm giá</title>
-  <link rel="stylesheet" href="/sidebar.css">
-  <link rel="stylesheet" href="/discount.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Giảm giá</title>
+    <link rel="stylesheet" href="/sidebar.css" />
+    <link rel="stylesheet" href="/discount.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <%- include('../sidebar') %>
 
-  <div class="container">
-    <!-- Sidebar -->
-    <%- include('../sidebar') %> 
+      <!-- Nội dung chính -->
+      <div class="main-content">
+        <header>
+          <h1>Quản lý Giảm giá</h1>
+          <nav>
+            <a href="/admin">Trang chủ</a>
+            <a href="/admin/settings">Tạo Giảm giá mới</a>
+          </nav>
+        </header>
 
-    <!-- Nội dung chính -->
-    <div class="main-content">
-      <header>
-        <h1>Quản lý Giảm giá</h1>
-        <nav>
-          <a href="/admin">Trang chủ</a>
-          <a href="/admin/discounts/create">Tạo Giảm giá mới</a>
-        </nav>
-      </header>
-
-      <main>
-        <h2>Danh sách Giảm giá</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Tên Giảm giá</th>
-              <th>Loại giảm giá</th>
-              <th>Ngày Bắt đầu</th>
-              <th>Ngày Kết thúc</th>
-              <th>Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% discounts.forEach(discount => { %>
+        <main>
+          <h2>Danh sách Giảm giá</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Tên Giảm giá</th>
+                <th>Loại giảm giá</th>
+                <th>Ngày Bắt đầu</th>
+                <th>Ngày Kết thúc</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% discounts.forEach(discount => { %>
               <tr>
                 <td><%= discount.code %></td>
                 <td>
-                  <% if (discount.type === 'fixed') { %>
-                    <%= discount.amount %> VND
-                  <% } else if (discount.type === 'percentage') { %>
-                    <%= discount.amount %> %
-                  <% } %>
+                  <% if (discount.type === 'fixed') { %> <%= discount.amount %>
+                  VND <% } else if (discount.type === 'percentage') { %> <%=
+                  discount.amount %> % <% } %>
                 </td>
-                <td><%= new Date(discount.createdAt).toLocaleDateString() %></td>
-                <td><%= new Date(discount.expiresAt).toLocaleDateString() %></td>
                 <td>
-                  <a href="/admin/discounts/edit/<%= discount._id %>">Sửa</a> | 
-                  <a href="/admin/discounts/delete/<%= discount._id %>" onclick="return confirm('Bạn có chắc muốn xóa không?')">Xóa</a>
+                  <%= new Date(discount.createdAt).toLocaleDateString() %>
+                </td>
+                <td>
+                  <%= new Date(discount.expiresAt).toLocaleDateString() %>
+                </td>
+                <td><%= discount.used === true ? 'Đã dùng' : 'Chưa dùng' %></td>
+                <td>
+                  <div class="action-buttons">
+                    <a
+                      class="edit"
+                      href="/settings/discounts/edit/<%= discount._id %>"
+                      >Sửa</a
+                    >
+                    <a class="delete" href="#" data-id="<%= discount._id %>"
+                      >Xóa</a
+                    >
+                  </div>
                 </td>
               </tr>
-            <% }) %>
-          </tbody>
-        </table>
-        
-      </main>
+              <% }) %>
+            </tbody>
+          </table>
+          <!-- Modal -->
+          <div id="editDiscountModal" class="modal" style="display: none">
+            <div class="modal-content">
+              <span class="close-btn">&times;</span>
+              <h2>Chỉnh sửa mã giảm giá</h2>
+              <form id="editDiscountForm">
+                <input type="hidden" name="id" id="discountId" />
+                <label for="code">Tên mã giảm giá:</label>
+                <input type="text" name="code" id="discountCode" required />
 
-    </div> <!-- End main-content -->
+                <label for="type">Loại giảm giá:</label>
+                <select name="type" id="discountType" required>
+                  <option value="fixed">Cố định (VND)</option>
+                  <option value="percentage">Phần trăm (%)</option>
+                </select>
 
-  </div> <!-- End container -->
+                <label for="amount">Số tiền / % giảm:</label>
+                <input
+                  type="number"
+                  name="amount"
+                  id="discountAmount"
+                  required
+                />
 
-  <footer>
-    <p>&copy; 2024 Quản lý Giảm giá - Tất cả các quyền được bảo lưu</p>
-  </footer>
+                <label for="expiresAt">Ngày kết thúc:</label>
+                <input
+                  type="date"
+                  name="expiresAt"
+                  id="discountExpiresAt"
+                  required
+                />
 
-</body>
+                <button type="submit">Lưu thay đổi</button>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+      <!-- End main-content -->
+    </div>
+    <!-- End container -->
+
+    <footer>
+      <p>&copy; 2024 Quản lý Giảm giá - Tất cả các quyền được bảo lưu</p>
+    </footer>
+
+    <script>
+      // Mở modal khi bấm nút "Sửa"
+      document.querySelectorAll(".edit").forEach((button) => {
+        button.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          // Lấy ID của giảm giá
+          const discountId = this.href.split("/").pop();
+
+          // Gọi API (hoặc fetch dữ liệu)
+          fetch(`/settings/discount/${discountId}`)
+            .then((response) => response.json())
+            .then((data) => {
+              // Điền dữ liệu vào form
+              document.getElementById("discountId").value = data._id;
+              document.getElementById("discountCode").value = data.code;
+              document.getElementById("discountType").value = data.type;
+              document.getElementById("discountAmount").value = data.amount;
+              document.getElementById("discountExpiresAt").value = new Date(
+                data.expiresAt
+              )
+                .toISOString()
+                .split("T")[0];
+
+              // Hiển thị modal
+              document.getElementById("editDiscountModal").style.display =
+                "flex";
+            });
+        });
+      });
+
+      // Đóng modal
+      document
+        .querySelector(".close-btn")
+        .addEventListener("click", function () {
+          document.getElementById("editDiscountModal").style.display = "none";
+        });
+
+      // Xử lý submit form
+      document
+        .getElementById("editDiscountForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const formData = new FormData(this);
+
+          // Gửi dữ liệu qua API
+          fetch(`/settings/update-discount/${formData.get("id")}`, {
+            method: "PATCH",
+            body: JSON.stringify({
+              code: formData.get("code"),
+              type: formData.get("type"),
+              amount: formData.get("amount"),
+              expiresAt: formData.get("expiresAt"),
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                // Nếu phản hồi không thành công, trả về lỗi
+                return response.json().then((err) => {
+                  throw new Error(
+                    err.message || "Đã xảy ra lỗi trong quá trình cập nhật."
+                  );
+                });
+              }
+              return response.json(); // Nếu thành công, trả về dữ liệu JSON
+            })
+            .then((data) => {
+              // Hiển thị thông báo SweetAlert khi cập nhật thành công
+              Swal.fire({
+                title: "Thành công!",
+                text: "Mã giảm giá đã được cập nhật.",
+                icon: "success",
+                confirmButtonText: "OK",
+              }).then(() => {
+                // Đóng modal và reload lại trang sau khi người dùng bấm OK
+                document.getElementById("editDiscountModal").style.display =
+                  "none";
+                location.reload();
+              });
+            })
+            .catch((error) => {
+              // Hiển thị thông báo lỗi SweetAlert
+              Swal.fire({
+                title: "Lỗi!",
+                text: error.message,
+                icon: "error",
+                confirmButtonText: "OK",
+              });
+            });
+        });
+
+      // Xử lý xóa mã giảm giá
+      document.querySelectorAll(".delete").forEach((button) => {
+        button.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          // Lấy ID của mã giảm giá
+          const discountId = this.getAttribute("data-id");
+
+          // Hiển thị hộp thoại xác nhận bằng SweetAlert
+          Swal.fire({
+            title: "Bạn có chắc chắn?",
+            text: "Hành động này không thể hoàn tác!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Xóa",
+            cancelButtonText: "Hủy",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Gửi yêu cầu DELETE đến server
+              fetch(`/settings/delete-discount/${discountId}`, {
+                method: "DELETE",
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    throw new Error("Có lỗi xảy ra khi thực hiện yêu cầu.");
+                  }
+
+                  if (response.status === 204) {
+                    // Xử lý khi xóa thành công (không có nội dung trả về)
+                    Swal.fire({
+                      title: "Đã xóa!",
+                      text: "Mã giảm giá đã được xóa thành công.",
+                      icon: "success",
+                      confirmButtonText: "OK",
+                    }).then(() => {
+                      location.reload();
+                    });
+                  }
+                })
+                .catch((error) => {
+                  Swal.fire({
+                    title: "Lỗi!",
+                    text: error.message,
+                    icon: "error",
+                    confirmButtonText: "OK",
+                  });
+                });
+            }
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

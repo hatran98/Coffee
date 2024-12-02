@@ -122,8 +122,29 @@ const updateDiscount = async (req, res) => {
     const { id } = req.params; // Lấy id từ params
     const { code, amount, type, expiresAt } = req.body; // Lấy dữ liệu từ body
 
+    // Kiểm tra xem code có đủ 10 ký tự hay không
+    if (!code || code.length !== 10) {
+      return res.status(400).json({ message: 'Code phải có đúng 10 ký tự!' });
+    }
+
+    // Kiểm tra xem expiresAt có phải ngày hợp lệ và lớn hơn ngày hiện tại hay không
+    const currentDate = new Date();
+    const expiresDate = new Date(expiresAt);
+
+    if (isNaN(expiresDate.getTime())) {
+      return res.status(400).json({ message: 'Ngày hết hạn không hợp lệ!' });
+    }
+
+    if (expiresDate <= currentDate) {
+      return res.status(400).json({ message: 'Ngày hết hạn phải lớn hơn ngày hiện tại!' });
+    }
+
     // Tìm mã giảm giá theo ID và cập nhật
-    const discount = await Discount.findByIdAndUpdate(id, { code, amount, type, expiresAt }, { new: true });
+    const discount = await Discount.findByIdAndUpdate(
+      id,
+      { code, amount, type, expiresAt },
+      { new: true }
+    );
 
     // Kiểm tra xem mã giảm giá có tồn tại không
     if (!discount) {
@@ -138,26 +159,21 @@ const updateDiscount = async (req, res) => {
   }
 };
 
+
 // Xóa mã giảm giá
 const deleteDiscount = async (req, res) => {
   try {
-    const { id } = req.params; // Lấy id từ params
-
-    // Tìm và xóa mã giảm giá theo ID
+    const { id } = req.params;
     const discount = await Discount.findByIdAndDelete(id);
-
-    // Kiểm tra nếu mã giảm giá không tồn tại
     if (!discount) {
       return res.status(404).json({ message: 'Discount not found' });
     }
-
-    // Trả về trạng thái xóa thành công
-    res.status(204).json(); // Không cần trả về dữ liệu
+    res.status(204).send(); 
   } catch (error) {
-    // Xử lý lỗi nếu có
     res.status(500).json({ message: error.message });
   }
 };
+
 const checkDiscount = async (req, res) => {
   try {
     const { code } = req.body; // Lấy mã giảm giá từ request body
@@ -196,6 +212,14 @@ const checkDiscount = async (req, res) => {
   }
 };
 
+const getDiscountById = async (req,res) => {
+  try {
+    const discount = await Discount.findById(req.params.id);
+    res.status(200).json(discount);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 
 module.exports = {
@@ -206,5 +230,6 @@ module.exports = {
   getDiscounts,
   updateDiscount,
   deleteDiscount,
-  checkDiscount
+  checkDiscount,
+  getDiscountById
 };
